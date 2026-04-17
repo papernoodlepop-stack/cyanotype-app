@@ -5,9 +5,7 @@
 <title>Canvas Editor</title>
 
 <style>
-
 /* ================= GLOBAL LOCK ================= */
-
 * {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
@@ -26,7 +24,6 @@ body {
 }
 
 /* ================= TEXT ================= */
-
 .ui-text {
   position: absolute;
   top: 18px;
@@ -40,7 +37,6 @@ body {
 }
 
 /* ================= THUMBNAILS ================= */
-
 .thumb-bar {
   position: absolute;
   top: 70px;
@@ -54,23 +50,15 @@ body {
 .thumb {
   width: 60px;
   height: 60px;
-  background: white;
+  background: white; /* default white */
   border: 2px solid black;
-  cursor: pointer;
 }
 
 .thumb.empty {
-  background: #777;
-}
-
-/* ================= THUMBNAIL SELECT ================= */
-.thumb.selected {
-  border: 2px solid cyan;
-  opacity: 0.7;
+  background: #777; /* gray when used */
 }
 
 /* ================= CANVAS ================= */
-
 .canvas-wrap {
   position: absolute;
   top: 220px;
@@ -82,19 +70,15 @@ body {
   background: #888;
   border: 2px solid black;
   overflow: hidden;
-  z-index: 10;
 }
 
 /* ================= OBJECT ================= */
-
 .box {
   position: absolute;
   width: 120px;
   height: 240px;
   touch-action: none;
-  -webkit-user-select: none;
   user-select: none;
-  -webkit-touch-callout: none;
 }
 
 .rotator {
@@ -106,12 +90,9 @@ body {
 .image {
   width: 100%;
   height: 100%;
-  background-image: url("https://placehold.co/120x240");
   background-size: cover;
   background-position: center;
 }
-
-/* ================= HANDLE ================= */
 
 .handle {
   position: absolute;
@@ -129,7 +110,6 @@ body {
 }
 
 .box .handle {
-  opacity: 0;
   transition: opacity 0.15s ease;
 }
 
@@ -146,27 +126,25 @@ body {
 }
 
 /* ================= FINALIZE BUTTON ================= */
-
 #finalizeBtn {
   position: absolute;
-  bottom: 20px;
+  top: 200px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 12px 20px;
+  padding: 10px 20px;
   font-size: 16px;
   background: cyan;
-  color: black;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
-  z-index: 1000;
+  z-index: 100;
 }
 
 </style>
 </head>
-
 <body>
-  <p style="color:white; font-size:18px;">Hello world 🚀 My site is working</p>
+
+<h1 style="color:white;font-size:16px;text-align:center;">Hello world 🚀 My site is working</h1>
 
 <div class="ui-text">
   Click, move, rotate.<br>
@@ -174,14 +152,14 @@ body {
 </div>
 
 <div class="thumb-bar">
-  <div class="thumb"></div>
-  <div class="thumb"></div>
-  <div class="thumb"></div>
-  <div class="thumb"></div>
-  <div class="thumb"></div>
-  <div class="thumb"></div>
-  <div class="thumb"></div>
-  <div class="thumb"></div>
+  <div class="thumb" style="background-image:url('https://placehold.co/60x60');"></div>
+  <div class="thumb" style="background-image:url('https://placehold.co/60x60');"></div>
+  <div class="thumb" style="background-image:url('https://placehold.co/60x60');"></div>
+  <div class="thumb" style="background-image:url('https://placehold.co/60x60');"></div>
+  <div class="thumb" style="background-image:url('https://placehold.co/60x60');"></div>
+  <div class="thumb" style="background-image:url('https://placehold.co/60x60');"></div>
+  <div class="thumb" style="background-image:url('https://placehold.co/60x60');"></div>
+  <div class="thumb" style="background-image:url('https://placehold.co/60x60');"></div>
 </div>
 
 <div class="canvas-wrap" id="canvas"></div>
@@ -198,25 +176,18 @@ const thumbs = document.querySelectorAll(".thumb");
 const canvas = document.getElementById("canvas");
 let slot = Array(8).fill(true);
 
-/* ================= THUMB CLICK SELECT ================= */
-thumbs.forEach((thumb) => {
-  thumb.addEventListener('click', () => {
-    thumb.classList.toggle('selected'); // toggle cyan highlight
-  });
-});
-
-/* ================= SPAWN ================= */
+/* ================= SPAWN BOX ================= */
 thumbs.forEach((t, i) => {
-  t.addEventListener("pointerdown", (e) => {
+  t.addEventListener("pointerdown", e => {
     e.preventDefault();
     if (!slot[i]) return;
+
     slot[i] = false;
-    t.classList.add("empty");
+    t.classList.add("empty"); // mark as used
 
     const x = canvas.clientWidth / 2 - 60;
     const y = canvas.clientHeight / 2 - 120;
-
-    const box = createBox(x, y);
+    const box = createBox(x, y, t.style.backgroundImage);
     box.dataset.origin = i;
     canvas.appendChild(box);
 
@@ -224,8 +195,8 @@ thumbs.forEach((t, i) => {
   });
 });
 
-/* ================= CREATE ================= */
-function createBox(x, y) {
+/* ================= CREATE BOX ================= */
+function createBox(x, y, bgImage) {
   const box = document.createElement("div");
   box.className = "box";
   box.style.left = x + "px";
@@ -236,6 +207,7 @@ function createBox(x, y) {
 
   const img = document.createElement("div");
   img.className = "image";
+  img.style.backgroundImage = bgImage; // use the thumbnail image
 
   const handle = document.createElement("div");
   handle.className = "handle";
@@ -250,13 +222,13 @@ function createBox(x, y) {
   rotator.appendChild(handle);
   box.appendChild(rotator);
 
-  box.addEventListener("pointerdown", (e) => {
+  box.addEventListener("pointerdown", e => {
     e.preventDefault();
     if (e.target.closest(".handle")) return;
     drag(box, e);
   });
 
-  handle.addEventListener("pointerdown", (e) => {
+  handle.addEventListener("pointerdown", e => {
     e.stopPropagation();
     rotate(box, rotator, e);
   });
@@ -267,6 +239,7 @@ function createBox(x, y) {
 /* ================= DRAG ================= */
 function drag(box, e) {
   box.classList.add("active");
+
   let ox = e.clientX - box.offsetLeft;
   let oy = e.clientY - box.offsetTop;
 
@@ -282,21 +255,18 @@ function drag(box, e) {
 
     const c = canvas.getBoundingClientRect();
     const b = box.getBoundingClientRect();
-
     const overlapX = Math.max(0, Math.min(b.right, c.right) - Math.max(b.left, c.left));
     const overlapY = Math.max(0, Math.min(b.bottom, c.bottom) - Math.max(b.top, c.top));
     const visibleRatio = (overlapX * overlapY) / (b.width * b.height);
 
-    if (visibleRatio < 0.2) {
-      returnHome(box);
-    }
+    if (visibleRatio < 0.2) returnHome(box);
   }
 
   document.addEventListener("pointermove", move);
   document.addEventListener("pointerup", up);
 }
 
-/* ================= RETURN ================= */
+/* ================= RETURN BOX ================= */
 function returnHome(box) {
   const origin = box.dataset.origin;
   const t = thumbs[origin].getBoundingClientRect();
@@ -308,7 +278,7 @@ function returnHome(box) {
   setTimeout(() => {
     box.remove();
     slot[origin] = true;
-    thumbs[origin].classList.remove("empty");
+    thumbs[origin].classList.remove("empty"); // return to white
   }, 250);
 }
 
@@ -318,43 +288,4 @@ function rotate(box, rotator, e) {
   const cx = r.left + r.width / 2;
   const cy = r.top + r.height / 2;
   const start = Math.atan2(e.clientY - cy, e.clientX - cx);
-  const base = parseFloat(rotator.dataset.r || 0);
-
-  function move(e) {
-    const a = Math.atan2(e.clientY - cy, e.clientX - cx);
-    const deg = base + (a - start) * (180 / Math.PI);
-    rotator.style.transform = `rotate(${deg}deg)`;
-    rotator.dataset.r = deg;
-  }
-
-  function up() {
-    document.removeEventListener("pointermove", move);
-    document.removeEventListener("pointerup", up);
-  }
-
-  document.addEventListener("pointermove", move);
-  document.addEventListener("pointerup", up);
-}
-
-/* ================= FINALIZE BUTTON ================= */
-const finalizeBtn = document.getElementById("finalizeBtn");
-finalizeBtn.addEventListener("click", () => {
-  const selected = [];
-  thumbs.forEach((thumb, index) => {
-    if (thumb.classList.contains("selected")) {
-      selected.push(index + 1);
-    }
-  });
-
-  if(selected.length === 0){
-    alert("You haven't selected any silhouettes yet!");
-  } else {
-    alert('Selected silhouettes: ' + selected.join(', '));
-  }
-
-  // NEXT STEP: send this data to backend / Stripe
-});
-
-</script>
-</body>
-</html>
+  const base = parseFloat(rotator.dataset.r || 
