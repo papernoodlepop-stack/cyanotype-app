@@ -56,6 +56,7 @@ body {
   height: 60px;
   background: white;
   border: 2px solid black;
+  cursor: pointer;
 }
 
 .thumb.empty {
@@ -68,7 +69,6 @@ body {
   opacity: 0.7;
 }
 
-
 /* ================= CANVAS ================= */
 
 .canvas-wrap {
@@ -76,14 +76,13 @@ body {
   top: 220px;
   left: 50%;
   transform: translateX(-50%);
-
   width: 88vw;
   max-width: 360px;
   aspect-ratio: 5 / 7;
-
   background: #888;
   border: 2px solid black;
   overflow: hidden;
+  z-index: 10;
 }
 
 /* ================= OBJECT ================= */
@@ -93,7 +92,6 @@ body {
   width: 120px;
   height: 240px;
   touch-action: none;
-
   -webkit-user-select: none;
   user-select: none;
   -webkit-touch-callout: none;
@@ -105,7 +103,6 @@ body {
   transform-origin: center;
 }
 
-/* image replacement (safe for mobile) */
 .image {
   width: 100%;
   height: 100%;
@@ -148,11 +145,28 @@ body {
   stroke-width: 2;
 }
 
+/* ================= FINALIZE BUTTON ================= */
+
+#finalizeBtn {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 20px;
+  font-size: 16px;
+  background: cyan;
+  color: black;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
 </style>
 </head>
 
 <body>
-  <h1>Hello world 🚀 My site is working</h1>
+  <h1 style="color:white;">Hello world 🚀 My site is working</h1>
 
 <div class="ui-text">
   Click, move, rotate.<br>
@@ -175,34 +189,27 @@ body {
 <button id="finalizeBtn">Finalize & Purchase</button>
 
 <script>
-
-  const thumbs = document.querySelectorAll('.thumb');
-  thumbs.forEach((thumb) => {
-  thumb.addEventListener('click', () => {
-    thumb.classList.toggle('selected'); // toggle selection highlight
-  });
-});
-
 /* ================= GLOBAL BLOCKERS ================= */
-
 document.addEventListener("contextmenu", e => e.preventDefault());
 document.addEventListener("selectstart", e => e.preventDefault());
 document.addEventListener("dragstart", e => e.preventDefault());
 
+const thumbs = document.querySelectorAll(".thumb");
 const canvas = document.getElementById("canvas");
-
 let slot = Array(8).fill(true);
 
+/* ================= THUMB CLICK SELECT ================= */
+thumbs.forEach((thumb) => {
+  thumb.addEventListener('click', () => {
+    thumb.classList.toggle('selected'); // toggle cyan highlight
+  });
+});
+
 /* ================= SPAWN ================= */
-
 thumbs.forEach((t, i) => {
-
   t.addEventListener("pointerdown", (e) => {
-
     e.preventDefault();
-
     if (!slot[i]) return;
-
     slot[i] = false;
     t.classList.add("empty");
 
@@ -211,7 +218,6 @@ thumbs.forEach((t, i) => {
 
     const box = createBox(x, y);
     box.dataset.origin = i;
-
     canvas.appendChild(box);
 
     drag(box, e);
@@ -219,9 +225,7 @@ thumbs.forEach((t, i) => {
 });
 
 /* ================= CREATE ================= */
-
 function createBox(x, y) {
-
   const box = document.createElement("div");
   box.className = "box";
   box.style.left = x + "px";
@@ -261,11 +265,8 @@ function createBox(x, y) {
 }
 
 /* ================= DRAG ================= */
-
 function drag(box, e) {
-
-    box.classList.add("active");
-
+  box.classList.add("active");
   let ox = e.clientX - box.offsetLeft;
   let oy = e.clientY - box.offsetTop;
 
@@ -275,23 +276,16 @@ function drag(box, e) {
   }
 
   function up() {
-
     document.removeEventListener("pointermove", move);
     document.removeEventListener("pointerup", up);
-
     box.classList.remove("active");
 
     const c = canvas.getBoundingClientRect();
     const b = box.getBoundingClientRect();
 
-    const overlapX =
-      Math.max(0, Math.min(b.right, c.right) - Math.max(b.left, c.left));
-
-    const overlapY =
-      Math.max(0, Math.min(b.bottom, c.bottom) - Math.max(b.top, c.top));
-
-    const visibleRatio =
-      (overlapX * overlapY) / (b.width * b.height);
+    const overlapX = Math.max(0, Math.min(b.right, c.right) - Math.max(b.left, c.left));
+    const overlapY = Math.max(0, Math.min(b.bottom, c.bottom) - Math.max(b.top, c.top));
+    const visibleRatio = (overlapX * overlapY) / (b.width * b.height);
 
     if (visibleRatio < 0.2) {
       returnHome(box);
@@ -303,9 +297,7 @@ function drag(box, e) {
 }
 
 /* ================= RETURN ================= */
-
 function returnHome(box) {
-
   const origin = box.dataset.origin;
   const t = thumbs[origin].getBoundingClientRect();
 
@@ -321,13 +313,10 @@ function returnHome(box) {
 }
 
 /* ================= ROTATE ================= */
-
 function rotate(box, rotator, e) {
-
   const r = box.getBoundingClientRect();
   const cx = r.left + r.width / 2;
   const cy = r.top + r.height / 2;
-
   const start = Math.atan2(e.clientY - cy, e.clientX - cx);
   const base = parseFloat(rotator.dataset.r || 0);
 
@@ -347,31 +336,25 @@ function rotate(box, rotator, e) {
   document.addEventListener("pointerup", up);
 }
 
-  /* ================= FINALIZE BUTTON ================= */
-  const finalizeBtn = document.getElementById("finalizeBtn");
-  finalizeBtn.addEventListener("click", () => {
-    // Collect indices of selected thumbnails
-    const selected = [];
-    thumbs.forEach((thumb, index) => {
-      if (thumb.classList.contains("selected")) {
-        selected.push(index + 1); // 1-based numbering
-      }
-    });
-
-    // Alert user what they selected
-    if(selected.length === 0){
-      alert("You haven't selected any silhouettes yet!");
-    } else {
-      alert('Selected silhouettes: ' + selected.join(', '));
+/* ================= FINALIZE BUTTON ================= */
+const finalizeBtn = document.getElementById("finalizeBtn");
+finalizeBtn.addEventListener("click", () => {
+  const selected = [];
+  thumbs.forEach((thumb, index) => {
+    if (thumb.classList.contains("selected")) {
+      selected.push(index + 1);
     }
-
-    // NEXT STEP: send this data to backend / Stripe
   });
 
+  if(selected.length === 0){
+    alert("You haven't selected any silhouettes yet!");
+  } else {
+    alert('Selected silhouettes: ' + selected.join(', '));
+  }
+
+  // NEXT STEP: send this data to backend / Stripe
+});
+
 </script>
-
-
-</script>
-
 </body>
 </html>
