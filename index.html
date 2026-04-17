@@ -62,6 +62,13 @@ body {
   background: #777;
 }
 
+/* ================= THUMBNAIL SELECT ================= */
+.thumb.selected {
+  border: 2px solid cyan;
+  opacity: 0.7;
+}
+
+
 /* ================= CANVAS ================= */
 
 .canvas-wrap {
@@ -165,7 +172,16 @@ body {
 
 <div class="canvas-wrap" id="canvas"></div>
 
+<button id="finalizeBtn">Finalize & Purchase</button>
+
 <script>
+
+  const thumbs = document.querySelectorAll('.thumb');
+  thumbs.forEach((thumb) => {
+  thumb.addEventListener('click', () => {
+    thumb.classList.toggle('selected'); // toggle selection highlight
+  });
+});
 
 /* ================= GLOBAL BLOCKERS ================= */
 
@@ -173,7 +189,6 @@ document.addEventListener("contextmenu", e => e.preventDefault());
 document.addEventListener("selectstart", e => e.preventDefault());
 document.addEventListener("dragstart", e => e.preventDefault());
 
-const thumbs = document.querySelectorAll(".thumb");
 const canvas = document.getElementById("canvas");
 
 let slot = Array(8).fill(true);
@@ -331,6 +346,30 @@ function rotate(box, rotator, e) {
   document.addEventListener("pointermove", move);
   document.addEventListener("pointerup", up);
 }
+
+  /* ================= FINALIZE BUTTON ================= */
+  const finalizeBtn = document.getElementById("finalizeBtn");
+  finalizeBtn.addEventListener("click", () => {
+    // Collect indices of selected thumbnails
+    const selected = [];
+    thumbs.forEach((thumb, index) => {
+      if (thumb.classList.contains("selected")) {
+        selected.push(index + 1); // 1-based numbering
+      }
+    });
+
+    // Alert user what they selected
+    if(selected.length === 0){
+      alert("You haven't selected any silhouettes yet!");
+    } else {
+      alert('Selected silhouettes: ' + selected.join(', '));
+    }
+
+    // NEXT STEP: send this data to backend / Stripe
+  });
+
+</script>
+
 
 </script>
 
