@@ -5,287 +5,333 @@
 <title>Canvas Editor</title>
 
 <style>
+
 /* ================= GLOBAL LOCK ================= */
+
 * {
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
-  box-sizing: border-box;
+ -webkit-tap-highlight-color: transparent;
+ user-select: none;
+ -webkit-user-select: none;
+ -webkit-touch-callout: none;
+ box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  height: 100vh;
-  overflow: hidden;
-  background: #222;
-  font-family: sans-serif;
-  padding: 20px 0;
+ margin: 0;
+ height: 100vh;
+ overflow: hidden;
+ background: #222;
+ font-family: sans-serif;
+ padding: 20px 0;
 }
 
 /* ================= TEXT ================= */
+
 .ui-text {
-  position: absolute;
-  top: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: white;
-  font-size: 14px;
-  text-align: center;
-  line-height: 1.2;
-  pointer-events: none;
+ position: absolute;
+ top: 18px;
+ left: 50%;
+ transform: translateX(-50%);
+ color: white;
+ font-size: 14px;
+ text-align: center;
+ line-height: 1.2;
+ pointer-events: none;
 }
 
 /* ================= THUMBNAILS ================= */
+
 .thumb-bar {
-  position: absolute;
-  top: 70px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: grid;
-  grid-template-columns: repeat(4, 60px);
-  gap: 10px;
+ position: absolute;
+ top: 70px;
+ left: 50%;
+ transform: translateX(-50%);
+ display: grid;
+ grid-template-columns: repeat(4, 60px);
+ gap: 10px;
 }
 
 .thumb {
-  width: 60px;
-  height: 60px;
-  background: white; /* default white */
-  border: 2px solid black;
+ width: 60px;
+ height: 60px;
+ background: white;
+ border: 2px solid black;
 }
 
 .thumb.empty {
-  background: #777; /* gray when used */
+ background: #777;
 }
 
 /* ================= CANVAS ================= */
+
 .canvas-wrap {
-  position: absolute;
-  top: 220px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 88vw;
-  max-width: 360px;
-  aspect-ratio: 5 / 7;
-  background: #888;
-  border: 2px solid black;
-  overflow: hidden;
+ position: absolute;
+ top: 220px;
+ left: 50%;
+ transform: translateX(-50%);
+
+ width: 88vw;
+ max-width: 360px;
+ aspect-ratio: 5 / 7;
+
+ background: #888;
+ border: 2px solid black;
+ overflow: hidden;
 }
 
 /* ================= OBJECT ================= */
+
 .box {
-  position: absolute;
-  width: 120px;
-  height: 240px;
-  touch-action: none;
-  user-select: none;
+ position: absolute;
+ width: 120px;
+ height: 240px;
+ touch-action: none;
+
+ -webkit-user-select: none;
+ user-select: none;
+ -webkit-touch-callout: none;
 }
 
 .rotator {
-  width: 100%;
-  height: 100%;
-  transform-origin: center;
+ width: 100%;
+ height: 100%;
+ transform-origin: center;
 }
 
+/* image replacement (safe for mobile) */
 .image {
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
+ width: 100%;
+ height: 100%;
+ background-image: url("https://placehold.co/120x240");
+ background-size: cover;
+ background-position: center;
 }
+
+/* ================= HANDLE ================= */
 
 .handle {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 44px;
-  height: 44px;
-  transform: translate(-50%, -50%);
-  background: rgba(255,255,255,0.9);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
+ position: absolute;
+ top: 50%;
+ left: 50%;
+ width: 44px;
+ height: 44px;
+ transform: translate(-50%, -50%);
+ background: rgba(255,255,255,0.9);
+ border-radius: 50%;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ opacity: 0;
 }
 
 .box .handle {
-  transition: opacity 0.15s ease;
+ opacity: 0;
+ transition: opacity 0.15s ease;
 }
 
 .box.active .handle {
-  opacity: 1;
+ opacity: 1;
 }
 
 .handle svg {
-  width: 28px;
-  height: 28px;
-  stroke: black;
-  fill: none;
-  stroke-width: 2;
-}
-
-/* ================= FINALIZE BUTTON ================= */
-#finalizeBtn {
-  position: absolute;
-  top: 200px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 10px 20px;
-  font-size: 16px;
-  background: cyan;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 100;
+ width: 28px;
+ height: 28px;
+ stroke: black;
+ fill: none;
+ stroke-width: 2;
 }
 
 </style>
 </head>
+
 <body>
 
-<h1 style="color:white;font-size:16px;text-align:center;">Hello world 🚀 My site is working</h1>
-
 <div class="ui-text">
-  Click, move, rotate.<br>
-  Drag outside to remove
+ Click, move, rotate.<br>
+ Drag outside to remove
 </div>
 
 <div class="thumb-bar">
-  <div class="thumb" style="background-image:url('https://placehold.co/60x60');"></div>
-  <div class="thumb" style="background-image:url('https://placehold.co/60x60');"></div>
-  <div class="thumb" style="background-image:url('https://placehold.co/60x60');"></div>
-  <div class="thumb" style="background-image:url('https://placehold.co/60x60');"></div>
-  <div class="thumb" style="background-image:url('https://placehold.co/60x60');"></div>
-  <div class="thumb" style="background-image:url('https://placehold.co/60x60');"></div>
-  <div class="thumb" style="background-image:url('https://placehold.co/60x60');"></div>
-  <div class="thumb" style="background-image:url('https://placehold.co/60x60');"></div>
+ <div class="thumb"></div>
+ <div class="thumb"></div>
+ <div class="thumb"></div>
+ <div class="thumb"></div>
+ <div class="thumb"></div>
+ <div class="thumb"></div>
+ <div class="thumb"></div>
+ <div class="thumb"></div>
 </div>
 
 <div class="canvas-wrap" id="canvas"></div>
 
-<button id="finalizeBtn">Finalize & Purchase</button>
-
 <script>
+
 /* ================= GLOBAL BLOCKERS ================= */
+
 document.addEventListener("contextmenu", e => e.preventDefault());
 document.addEventListener("selectstart", e => e.preventDefault());
 document.addEventListener("dragstart", e => e.preventDefault());
 
 const thumbs = document.querySelectorAll(".thumb");
 const canvas = document.getElementById("canvas");
+
 let slot = Array(8).fill(true);
 
-/* ================= SPAWN BOX ================= */
+/* ================= SPAWN ================= */
+
 thumbs.forEach((t, i) => {
-  t.addEventListener("pointerdown", e => {
-    e.preventDefault();
-    if (!slot[i]) return;
 
-    slot[i] = false;
-    t.classList.add("empty"); // mark as used
+ t.addEventListener("pointerdown", (e) => {
 
-    const x = canvas.clientWidth / 2 - 60;
-    const y = canvas.clientHeight / 2 - 120;
-    const box = createBox(x, y, t.style.backgroundImage);
-    box.dataset.origin = i;
-    canvas.appendChild(box);
+   e.preventDefault();
 
-    drag(box, e);
-  });
+   if (!slot[i]) return;
+
+   slot[i] = false;
+   t.classList.add("empty");
+
+   const x = canvas.clientWidth / 2 - 60;
+   const y = canvas.clientHeight / 2 - 120;
+
+   const box = createBox(x, y);
+   box.dataset.origin = i;
+
+   canvas.appendChild(box);
+
+   drag(box, e);
+ });
 });
 
-/* ================= CREATE BOX ================= */
-function createBox(x, y, bgImage) {
-  const box = document.createElement("div");
-  box.className = "box";
-  box.style.left = x + "px";
-  box.style.top = y + "px";
+/* ================= CREATE ================= */
 
-  const rotator = document.createElement("div");
-  rotator.className = "rotator";
+function createBox(x, y) {
 
-  const img = document.createElement("div");
-  img.className = "image";
-  img.style.backgroundImage = bgImage; // use the thumbnail image
+ const box = document.createElement("div");
+ box.className = "box";
+ box.style.left = x + "px";
+ box.style.top = y + "px";
 
-  const handle = document.createElement("div");
-  handle.className = "handle";
-  handle.innerHTML = `
-    <svg viewBox="0 0 24 24">
-      <path d="M21 12a9 9 0 1 1-3-6.7"/>
-      <polyline points="21 3 21 8 16 8"/>
-    </svg>
-  `;
+ const rotator = document.createElement("div");
+ rotator.className = "rotator";
 
-  rotator.appendChild(img);
-  rotator.appendChild(handle);
-  box.appendChild(rotator);
+ const img = document.createElement("div");
+ img.className = "image";
 
-  box.addEventListener("pointerdown", e => {
-    e.preventDefault();
-    if (e.target.closest(".handle")) return;
-    drag(box, e);
-  });
+ const handle = document.createElement("div");
+ handle.className = "handle";
+ handle.innerHTML = `
+   <svg viewBox="0 0 24 24">
+     <path d="M21 12a9 9 0 1 1-3-6.7"/>
+     <polyline points="21 3 21 8 16 8"/>
+   </svg>
+ `;
 
-  handle.addEventListener("pointerdown", e => {
-    e.stopPropagation();
-    rotate(box, rotator, e);
-  });
+ rotator.appendChild(img);
+ rotator.appendChild(handle);
+ box.appendChild(rotator);
 
-  return box;
+ box.addEventListener("pointerdown", (e) => {
+   e.preventDefault();
+   if (e.target.closest(".handle")) return;
+   drag(box, e);
+ });
+
+ handle.addEventListener("pointerdown", (e) => {
+   e.stopPropagation();
+   rotate(box, rotator, e);
+ });
+
+ return box;
 }
 
 /* ================= DRAG ================= */
+
 function drag(box, e) {
-  box.classList.add("active");
 
-  let ox = e.clientX - box.offsetLeft;
-  let oy = e.clientY - box.offsetTop;
+   box.classList.add("active");
 
-  function move(e) {
-    box.style.left = e.clientX - ox + "px";
-    box.style.top = e.clientY - oy + "px";
-  }
+ let ox = e.clientX - box.offsetLeft;
+ let oy = e.clientY - box.offsetTop;
 
-  function up() {
-    document.removeEventListener("pointermove", move);
-    document.removeEventListener("pointerup", up);
-    box.classList.remove("active");
+ function move(e) {
+   box.style.left = e.clientX - ox + "px";
+   box.style.top = e.clientY - oy + "px";
+ }
 
-    const c = canvas.getBoundingClientRect();
-    const b = box.getBoundingClientRect();
-    const overlapX = Math.max(0, Math.min(b.right, c.right) - Math.max(b.left, c.left));
-    const overlapY = Math.max(0, Math.min(b.bottom, c.bottom) - Math.max(b.top, c.top));
-    const visibleRatio = (overlapX * overlapY) / (b.width * b.height);
+ function up() {
 
-    if (visibleRatio < 0.2) returnHome(box);
-  }
+   document.removeEventListener("pointermove", move);
+   document.removeEventListener("pointerup", up);
 
-  document.addEventListener("pointermove", move);
-  document.addEventListener("pointerup", up);
+   box.classList.remove("active");
+
+   const c = canvas.getBoundingClientRect();
+   const b = box.getBoundingClientRect();
+
+   const overlapX =
+     Math.max(0, Math.min(b.right, c.right) - Math.max(b.left, c.left));
+
+   const overlapY =
+     Math.max(0, Math.min(b.bottom, c.bottom) - Math.max(b.top, c.top));
+
+   const visibleRatio =
+     (overlapX * overlapY) / (b.width * b.height);
+
+   if (visibleRatio < 0.2) {
+     returnHome(box);
+   }
+ }
+
+ document.addEventListener("pointermove", move);
+ document.addEventListener("pointerup", up);
 }
 
-/* ================= RETURN BOX ================= */
+/* ================= RETURN ================= */
+
 function returnHome(box) {
-  const origin = box.dataset.origin;
-  const t = thumbs[origin].getBoundingClientRect();
 
-  box.style.transition = "all 0.25s ease";
-  box.style.left = t.left + "px";
-  box.style.top = t.top + "px";
+ const origin = box.dataset.origin;
+ const t = thumbs[origin].getBoundingClientRect();
 
-  setTimeout(() => {
-    box.remove();
-    slot[origin] = true;
-    thumbs[origin].classList.remove("empty"); // return to white
-  }, 250);
+ box.style.transition = "all 0.25s ease";
+ box.style.left = t.left + "px";
+ box.style.top = t.top + "px";
+
+ setTimeout(() => {
+   box.remove();
+   slot[origin] = true;
+   thumbs[origin].classList.remove("empty");
+ }, 250);
 }
 
 /* ================= ROTATE ================= */
+
 function rotate(box, rotator, e) {
-  const r = box.getBoundingClientRect();
-  const cx = r.left + r.width / 2;
-  const cy = r.top + r.height / 2;
-  const start = Math.atan2(e.clientY - cy, e.clientX - cx);
-  const base = parseFloat(rotator.dataset.r || 
+
+ const r = box.getBoundingClientRect();
+ const cx = r.left + r.width / 2;
+ const cy = r.top + r.height / 2;
+
+ const start = Math.atan2(e.clientY - cy, e.clientX - cx);
+ const base = parseFloat(rotator.dataset.r || 0);
+
+ function move(e) {
+   const a = Math.atan2(e.clientY - cy, e.clientX - cx);
+   const deg = base + (a - start) * (180 / Math.PI);
+   rotator.style.transform = `rotate(${deg}deg)`;
+   rotator.dataset.r = deg;
+ }
+
+ function up() {
+   document.removeEventListener("pointermove", move);
+   document.removeEventListener("pointerup", up);
+ }
+
+ document.addEventListener("pointermove", move);
+ document.addEventListener("pointerup", up);
+}
+
+</script>
+
+</body>
+</html>
