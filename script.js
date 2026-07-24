@@ -404,41 +404,39 @@ const CanvasObjects = (() => {
 
   const hidePanel = () => { if (panel) panel.style.display = "none"; };
 
-  // ── Free rotate — triggered by panel button, drag anywhere ──
-  // No handle element on the image. After pressing ↻, the next
-  // pointermove anywhere on the document rotates the object.
-  function startFreeRotate(o, triggerEvent) {
-    if (blockedByTouchLock()) return;
-    const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
-    if (!el) return;
 
-    // Lock center at activation time
-    const r  = el.getBoundingClientRect();
-    const cx = r.left + r.width  / 2;
-    const cy = r.top  + r.height / 2;
-    const a0 = Math.atan2(triggerEvent.clientY - cy, triggerEvent.clientX - cx);
-    const r0 = o.rotation;
+  function startFreeRotateCaptured(o, handleEl, triggerEvent) {
+  const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
+  if (!el) return;
 
-    document.body.style.cursor = "crosshair";
+  const r  = el.getBoundingClientRect();
+  const cx = r.left + r.width  / 2;
+  const cy = r.top  + r.height / 2;
+  const a0 = Math.atan2(triggerEvent.clientY - cy, triggerEvent.clientX - cx);
+  const r0 = o.rotation;
 
-    function onMove(ev) {
-      if (blockedByTouchLock()) return;
-      let d = Math.atan2(ev.clientY - cy, ev.clientX - cx) - a0;
-      if (d >  Math.PI) d -= 2 * Math.PI;
-      if (d < -Math.PI) d += 2 * Math.PI;
-      o.rotation = r0 + d;
-      el.style.transform = `rotate(${o.rotation}rad)`;
-    }
-    function onUp() {
-      document.removeEventListener("pointermove", onMove);
-      document.removeEventListener("pointerup", onUp);
-      document.body.style.cursor = "";
-      positionPanel();
-      Storage.save();
-    }
-    document.addEventListener("pointermove", onMove);
-    document.addEventListener("pointerup", onUp);
+  document.body.style.cursor = "crosshair";
+
+  function onMove(ev) {
+    let d = Math.atan2(ev.clientY - cy, ev.clientX - cx) - a0;
+    if (d >  Math.PI) d -= 2 * Math.PI;
+    if (d < -Math.PI) d += 2 * Math.PI;
+    o.rotation = r0 + d;
+    el.style.transform = `rotate(${o.rotation}rad)`;
   }
+  function onUp(ev) {
+    handleEl.releasePointerCapture(ev.pointerId);
+    handleEl.removeEventListener("pointermove", onMove);
+    handleEl.removeEventListener("pointerup", onUp);
+    document.body.style.cursor = "";
+    positionPanel();
+    Storage.save();
+  }
+
+  handleEl.addEventListener("pointermove", onMove);
+  handleEl.addEventListener("pointerup", onUp);
+}
+
 
   // ── Build DOM element for one object ───
   function buildEl(o) {
@@ -509,67 +507,6 @@ rotHandle.addEventListener("pointerdown", e => {
   startFreeRotateCaptured(o, rotHandle, e);
 });
 
-function startFreeRotateCaptured(o, handleEl, triggerEvent) {
-  const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
-  if (!el) return;
-
-  const r  = el.getBoundingClientRect();
-  const cx = r.left + r.width  / 2;
-  const cy = r.top  + r.height / 2;
-  const a0 = Math.atan2(triggerEvent.clientY - cy, triggerEvent.clientX - cx);
-  const r0 = o.rotation;
-
-  document.body.style.cursor = "crosshair";
-
-  function onMove(ev) {
-    let d = Math.atan2(ev.clientY - cy, ev.clientX - cx) - a0;
-    if (d >  Math.PI) d -= 2 * Math.PI;
-    if (d < -Math.PI) d += 2 * Math.PI;
-    o.rotation = r0 + d;
-    el.style.transform = `rotate(${o.rotation}rad)`;
-  }
-  function onUp(ev) {
-    handleEl.releasePointerCapture(ev.pointerId);
-    handleEl.removeEventListener("pointermove", onMove);
-    handleEl.removeEventListener("pointerup", onUp);
-    document.body.style.cursor = "";
-    positionPanel();
-    Storage.save();
-  }
-
-  handleEl.addEventListener("pointermove", onMove);
-  handleEl.addEventListener("pointerup", onUp);
-}
-
-function selectObj(id) {
-  selectedId = id;
-  objects.forEach(o => {
-    const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
-    if (!el) return;
-    const isSel = o.id === id;
-    el.querySelector(".sel-outline").style.display = isSel ? "block" : "none";
-    const rh = el.querySelector(".rotate-handle");
-    if (rh) rh.style.display = isSel ? "flex" : "none";
-  });
-  updateInteractivity();
-  positionPanel();
-  hidePicker();
-}
-
-function deselect() {
-  selectedId = null;
-  objects.forEach(o => {
-    const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
-    if (!el) return;
-    el.querySelector(".sel-outline").style.display = "none";
-    const rh = el.querySelector(".rotate-handle");
-    if (rh) rh.style.display = "none";
-  });
-  hidePanel();
-  updateInteractivity();
-  hidePicker();
-}
-
 
     // ── Pointer handling ─────────────────
     let lpTimer = null, didMove = false;
@@ -609,28 +546,33 @@ function deselect() {
 
   // ── Selection ───────────────────────────
   function selectObj(id) {
-    selectedId = id;
-    objects.forEach(o => {
-      const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
-      if (!el) return;
-      el.querySelector(".sel-outline").style.display = o.id === id ? "block" : "none";
-    });
-    updateInteractivity();
-    positionPanel();
-    hidePicker();
-  }
+  selectedId = id;
+  objects.forEach(o => {
+    const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
+    if (!el) return;
+    const isSel = o.id === id;
+    el.querySelector(".sel-outline").style.display = isSel ? "block" : "none";
+    const rh = el.querySelector(".rotate-handle");
+    if (rh) rh.style.display = isSel ? "flex" : "none";
+  });
+  updateInteractivity();
+  positionPanel();
+  hidePicker();
+}
 
-  function deselect() {
-    selectedId = null;
-    objects.forEach(o => {
-      const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
-      if (!el) return;
-      el.querySelector(".sel-outline").style.display = "none";
-    });
-    hidePanel();
-    updateInteractivity();
-    hidePicker();
-  }
+function deselect() {
+  selectedId = null;
+  objects.forEach(o => {
+    const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
+    if (!el) return;
+    el.querySelector(".sel-outline").style.display = "none";
+    const rh = el.querySelector(".rotate-handle");
+    if (rh) rh.style.display = "none";
+  });
+  hidePanel();
+  updateInteractivity();
+  hidePicker();
+}
 
   // ── Drag ────────────────────────────────
   function startDrag(objId, e, onFirstMove) {
