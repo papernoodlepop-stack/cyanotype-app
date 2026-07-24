@@ -819,12 +819,18 @@ const FormatPicker = (() => {
   }
 
   function choose(mode) {
-    frame.classList.remove("mode-portrait", "mode-landscape");
-    frame.classList.add(`mode-${mode}`);
-    el.style.display = "none";
-    localStorage.setItem("canvasFormat", mode);
-    updateToggleUI(mode);
-  }
+  frame.classList.remove("mode-portrait", "mode-landscape");
+  frame.classList.add(`mode-${mode}`);
+  el.style.display = "none";
+  localStorage.setItem("canvasFormat", mode);
+  updateToggleUI(mode);
+
+  // Reflow existing objects to match the new canvas shape
+  if (CanvasObjects.hasBoxes()) {
+  Storage.save();
+  waitForLayout(() => CanvasObjects.restore());
+ }
+}
 
   document.getElementById("pickPortrait")?.addEventListener("click", () => choose("portrait"));
   document.getElementById("pickLandscape")?.addEventListener("click", () => choose("landscape"));
