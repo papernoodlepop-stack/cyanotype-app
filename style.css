@@ -109,7 +109,7 @@ img {
   max-width: 100vw;
   height: auto;        /* was 100dvh — let content size itself instead of stretching to fill */
   max-height: 100dvh;
-  padding: 8px;
+  padding: 60px 8px 8px;
   gap: 8px;
   align-items: center;
   justify-content: center;
@@ -178,8 +178,9 @@ button {
 }
 
 .format-toggle-btn {
-  padding: 5px 10px;
-  font-size: 13px;
+  font-size: 20px;
+  line-height: 1;
+  padding: 8px 12px;
   border-radius: 10px;
   border: 1px solid #666;
   background: #333;
