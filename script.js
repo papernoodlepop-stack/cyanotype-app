@@ -810,19 +810,34 @@ picker.appendChild(header);
 const FormatPicker = (() => {
   const el = document.getElementById("formatPicker");
   const frame = document.querySelector(".editor-frame");
+  const btnPortrait = document.getElementById("toPortraitBtn");
+  const btnLandscape = document.getElementById("toLandscapeBtn");
+
+  function updateToggleUI(mode) {
+    btnPortrait?.classList.toggle("active", mode === "portrait");
+    btnLandscape?.classList.toggle("active", mode === "landscape");
+  }
 
   function choose(mode) {
     frame.classList.remove("mode-portrait", "mode-landscape");
     frame.classList.add(`mode-${mode}`);
     el.style.display = "none";
     localStorage.setItem("canvasFormat", mode);
+    updateToggleUI(mode);
   }
 
   document.getElementById("pickPortrait")?.addEventListener("click", () => choose("portrait"));
   document.getElementById("pickLandscape")?.addEventListener("click", () => choose("landscape"));
 
+  btnPortrait?.addEventListener("click", () => choose("portrait"));
+  btnLandscape?.addEventListener("click", () => choose("landscape"));
+
   const saved = localStorage.getItem("canvasFormat");
-  if (saved) choose(saved);
+  if (saved) {
+    choose(saved);
+  } else {
+    el.style.display = "flex";
+  }
 
   return { el, choose };
 })();
@@ -1187,6 +1202,9 @@ const Actions = {
   reset() {
     CanvasObjects.clear(); Thumbs.reset();
     Storage.clearAll(); UI.closeModals(); State.forceEdit();
+    localStorage.removeItem("canvasFormat");
+    document.querySelector(".editor-frame").classList.remove("mode-portrait", "mode-landscape");
+    document.getElementById("formatPicker").style.display = "flex";
   },
   placeThumb(i) {
     if (State.get("checkoutInProgress")) return;
