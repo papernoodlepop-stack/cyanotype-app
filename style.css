@@ -504,6 +504,18 @@ body.modal-open {
 =========================== */
 @media (orientation: landscape) {
 
+  .top-ui button,
+  .info-btn {
+    writing-mode: initial;      /* undo any vertical-lr from earlier if still present */
+    text-orientation: initial;
+    transform: rotate(-90deg);
+  }
+
+  .thumb {
+    /* counter-rotate the background image so it reads upright */
+    transform: rotate(-90deg);
+  }
+
   body {
     align-items: center;
     justify-content: center;
