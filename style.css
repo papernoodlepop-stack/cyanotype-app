@@ -136,6 +136,8 @@ img {
 .editor-frame.mode-landscape .top-ui {
   order: 3;
   flex-direction: column;
+  height: 360px;        /* match canvas-wrap's max-height */
+  justify-content: space-between; /* or space-around, center, etc — distributes buttons along that height */
 }
 
 .editor-frame.mode-landscape .canvas-wrap {
