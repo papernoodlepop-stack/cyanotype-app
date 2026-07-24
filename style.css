@@ -192,11 +192,16 @@ button {
 }
 
 @media (max-height: 500px) {
-  body {
-    align-items: flex-start;
-    overflow-y: auto;
+  html, body {
+    overflow-y: auto !important;
+    touch-action: pan-y !important; /* allow vertical scroll gesture specifically */
+    height: auto !important;         /* let body grow beyond 100dvh if content needs it */
   }
   
+  body {
+    align-items: flex-start;
+  }
+
   .editor-frame.mode-landscape .canvas-wrap {
     width: 320px;
     max-width: 320px;
@@ -208,6 +213,7 @@ button {
   .editor-frame.mode-landscape {
     padding: 8px;
     gap: 16px;
+    max-height: none;
   }
 
   .editor-frame.mode-landscape .top-ui {
