@@ -110,9 +110,22 @@ img {
   height: auto;        /* was 100dvh — let content size itself instead of stretching to fill */
   max-height: 100dvh;
   padding: 60px 8px 8px;
-  gap: 8px;
+  gap: 40px;
   align-items: center;
   justify-content: center;
+}
+
+.editor-frame.mode-landscape .top-ui button,
+.editor-frame.mode-landscape .info-btn,
+.editor-frame.mode-landscape .format-toggle-btn {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
 }
 
 .editor-frame.mode-landscape .canvas-container,
