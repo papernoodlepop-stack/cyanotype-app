@@ -592,6 +592,23 @@ function deselect() {
       o.x = clamp(ev.clientX - r.left - ox, -(o.w - VISIBLE), r.width  - VISIBLE);
       o.y = clamp(ev.clientY - r.top  - oy, -(o.h - VISIBLE), r.height - VISIBLE);
       if (el) { el.style.left = `${o.x}px`; el.style.top = `${o.y}px`; }
+
+      function updateRotateHandlePosition(o, handleEl) {
+  const cr = DOM.canvas.getBoundingClientRect();
+  const margin = 4;
+
+  // Clamp handle's ideal corner position to stay within canvas bounds
+  const idealTop  = o.y + margin;
+  const idealLeft = o.x + o.w - 24 - margin; // 24 = handle width
+
+  const clampedTop  = clamp(idealTop, margin, cr.height - 24 - margin);
+  const clampedLeft = clamp(idealLeft, margin, cr.width  - 24 - margin);
+
+  // Position handle relative to canvas, not relative to the object anymore
+  handleEl.style.position = "fixed";
+  handleEl.style.left = `${cr.left + clampedLeft}px`;
+  handleEl.style.top  = `${cr.top + clampedTop}px`;
+}
     }
     function onUp() {
       document.removeEventListener("pointermove", onMove);
