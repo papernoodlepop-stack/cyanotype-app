@@ -130,12 +130,11 @@ img {
 }
 .editor-frame.mode-landscape .thumb-bar {
   order: 2;
-  height: 360px;
   grid-template-columns: repeat(2, 44px);
   grid-template-rows: repeat(4, 44px);
-  align-content: space-between; /* spreads the 4 rows evenly across full height */
-  justify-content: center;      /* keeps the 2 columns centered horizontally */
-  gap: 0 8px; /* remove fixed row gap since space-between now handles vertical spacing */
+  gap: 12px 16px; /* fixed gap instead of space-between */
+  justify-content: center;
+  align-content: start; /* group at top instead of stretching full height */
 }
 .editor-frame.mode-landscape .top-ui {
   order: 3;
