@@ -115,6 +115,10 @@ img {
   justify-content: center;
 }
 
+.editor-frame.mode-landscape .format-toggle {
+  flex-direction: column;
+}
+
 .editor-frame.mode-landscape .top-ui button,
 .editor-frame.mode-landscape .info-btn,
 .editor-frame.mode-landscape .format-toggle-btn {
