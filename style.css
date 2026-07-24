@@ -192,18 +192,26 @@ button {
 }
 
 @media (max-height: 500px) {
-  html, body {
+  html {
     overflow-y: auto !important;
-    touch-action: pan-y !important;
     height: auto !important;
   }
 
   body {
+    touch-action: pan-y !important; /* only body-level background allows scroll */
     align-items: flex-start;
+    overflow-y: auto;
+    height: auto !important;
   }
 
   .editor-frame.mode-landscape {
     max-height: none;
+  }
+
+  /* Canvas and its contents keep full manual touch control — no pan-y here */
+  .canvas-wrap,
+  .box {
+    touch-action: none !important;
   }
 }
 
