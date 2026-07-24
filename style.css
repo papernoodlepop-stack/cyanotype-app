@@ -56,6 +56,64 @@ img {
 /* ===========================
   EDITOR FRAME
 =========================== */
+.format-picker {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+}
+
+.format-picker-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  color: #fff;
+}
+
+.format-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: #333;
+  border: 2px solid #666;
+  border-radius: 10px;
+  padding: 16px 24px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.format-preview {
+  background: #7a7a7a;
+  border: 2px solid #000;
+}
+.portrait-preview  { width: 50px; height: 70px; }
+.landscape-preview { width: 70px; height: 50px; }
+
+/* Canvas shape driven by explicit class, not orientation media query */
+.editor-frame.mode-portrait .canvas-wrap {
+  aspect-ratio: 5 / 7;
+}
+.editor-frame.mode-landscape .canvas-wrap {
+  aspect-ratio: 7 / 5;
+}
+
+/* Layout reflow also driven by the class, not @media(orientation) */
+.editor-frame.mode-landscape {
+  flex-direction: row;
+  height: 100dvh;
+  max-height: 100dvh;
+  padding: 8px;
+  gap: 8px;
+}
+.editor-frame.mode-landscape .canvas-container { order: 1; }
+.editor-frame.mode-landscape .thumb-bar         { order: 2; grid-template-columns: repeat(2, 44px); grid-template-rows: repeat(4, 44px); }
+.editor-frame.mode-landscape .top-ui            { order: 3; flex-direction: column; height: 100%; }
+
 .editor-frame {
   width: min(360px, 88vw);
   display: flex;
@@ -492,61 +550,3 @@ body.modal-open {
 /* ===========================
   MOBILE
 =========================== */
-@media (max-width: 600px) {
-  .top-ui {
-    gap: 24px;
-    padding: 8px 6px;
-  }
-}
-
-/* ===========================
-  LANDSCAPE
-=========================== */
-@media (orientation: landscape) {
-
-  .top-ui button,
-  .info-btn {
-    writing-mode: initial;      /* undo any vertical-lr from earlier if still present */
-    text-orientation: initial;
-    transform: rotate(-90deg);
-  }
-
-  .thumb {
-    /* counter-rotate the background image so it reads upright */
-    transform: rotate(-90deg);
-  }
-
-  body {
-    align-items: center;
-    justify-content: center;
-  }
-
-  .editor-frame {
-    /* Rotate the whole portrait layout as one block.
-       Swap width/height so the rotated box fills the landscape viewport. */
-    width: 100dvh;
-    height: 100dvw;
-    max-height: none;
-    transform: rotate(90deg);
-    transform-origin: center center;
-
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 8px;
-    gap: 8px;
-  }
-
-  .thumb-bar {
-    grid-template-columns: repeat(4, 44px);
-    grid-template-rows: repeat(2, 44px);
-    gap: 8px 16px;
-  }
-
-  .thumb {
-    width: 44px;
-    height: 44px;
-  }
-  
-
-}

@@ -15,12 +15,26 @@
 =========================== -->
 <div class="top-ui">
 
+  <div id="formatPicker" class="format-picker">
+  <div class="format-picker-content">
+    <h2>Choose your format</h2>
+    <button id="pickPortrait" class="format-btn">
+      <div class="format-preview portrait-preview"></div>
+      Portrait
+    </button>
+    <button id="pickLandscape" class="format-btn">
+      <div class="format-preview landscape-preview"></div>
+      Landscape
+    </button>
+  </div>
+</div>
+
  <!-- Start Over ONLY affects canvas + thumbnail sync -->
  <button type="button" class="start over" id="startOverBtn">
    StartOver
  </button>
 
- 
+
 <button id="infoBtn" class="info-btn">ReadFirst</button>
 
 <div id="helpPopup" class="help-popup">
@@ -29,7 +43,7 @@
 
   <div class="help-section">
     <div class="help-bold">For landscape format</div>
-    Lock your phone rotation. When you use Layer panel, click ↻ to adjust.
+    Choose your format (Portrait or Landscape) at the start. This can't be changed once you begin your design.
   </div>
 
   <div class="help-section">

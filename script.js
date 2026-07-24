@@ -804,6 +804,29 @@ picker.appendChild(header);
 // ─────────────────────────────────────────
 //  UI
 // ─────────────────────────────────────────
+// ─────────────────────────────────────────
+//  FORMAT PICKER
+// ─────────────────────────────────────────
+const FormatPicker = (() => {
+  const el = document.getElementById("formatPicker");
+  const frame = document.querySelector(".editor-frame");
+
+  function choose(mode) {
+    frame.classList.remove("mode-portrait", "mode-landscape");
+    frame.classList.add(`mode-${mode}`);
+    el.style.display = "none";
+    localStorage.setItem("canvasFormat", mode);
+  }
+
+  document.getElementById("pickPortrait")?.addEventListener("click", () => choose("portrait"));
+  document.getElementById("pickLandscape")?.addEventListener("click", () => choose("landscape"));
+
+  const saved = localStorage.getItem("canvasFormat");
+  if (saved) choose(saved);
+
+  return { el, choose };
+})();
+
 const UI = (() => {
   function setBtn(el, disabled, text) {
     if (!el) return;
