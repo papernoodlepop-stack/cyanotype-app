@@ -192,12 +192,7 @@ button {
 }
 
 @media (max-height: 500px) {
-  html, body {
-    overflow-y: auto !important;
-    touch-action: pan-y !important; /* allow vertical scroll gesture specifically */
-    height: auto !important;         /* let body grow beyond 100dvh if content needs it */
-  }
-  
+
   body {
     align-items: flex-start;
   }
