@@ -139,11 +139,12 @@ img {
 }
 
 .editor-frame.mode-landscape .canvas-wrap {
-  width: min(504px, 70vw);
+  width: 504px;
   height: auto;
   max-width: 504px;
   max-height: 360px;
   aspect-ratio: 7 / 5;
+  flex-shrink: 0;
 }
 
 .editor-frame {
