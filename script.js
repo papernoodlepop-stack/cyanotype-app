@@ -475,12 +475,13 @@ const CanvasObjects = (() => {
     el.appendChild(outline);
 
     // Rotate handle — same reliable touch pattern as drag (setPointerCapture + touch-action:none)
+// Rotate handle — same reliable touch pattern as drag (setPointerCapture + touch-action:none)
 const rotHandle = document.createElement("div");
 rotHandle.className = "rotate-handle";
 rotHandle.style.cssText = [
   "position:absolute",
-  "top:-28px", "left:50%", "transform:translateX(-50%)",
-  "width:26px", "height:26px",
+  "top:4px", "right:4px",
+  "width:24px", "height:24px",
   "border-radius:50%",
   "background:#378ADD",
   "border:2px solid #fff",
@@ -492,7 +493,7 @@ rotHandle.style.cssText = [
 ].join(";");
 rotHandle.textContent = "↻";
 Object.assign(rotHandle.style, {
-  fontSize: "14px",
+  fontSize: "13px",
   color: "#fff",
   display: "none",
   alignItems: "center",
