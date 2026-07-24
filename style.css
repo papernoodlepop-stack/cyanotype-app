@@ -132,7 +132,7 @@ img {
   order: 2;
   grid-template-columns: repeat(2, 44px);
   grid-template-rows: repeat(4, 44px);
-  gap: 60px 16px; /* fixed gap instead of space-between */
+  gap: 50px 16px; /* fixed gap instead of space-between */
   justify-content: center;
   align-content: start; /* group at top instead of stretching full height */
 }
