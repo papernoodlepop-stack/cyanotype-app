@@ -329,7 +329,6 @@ const CanvasObjects = (() => {
 
     // Order: rotate | fwd | bck | del | done(last)
     [
-      { id:"cp-rotate", label:"↻", title:"Rotate",         danger:false },
       { id:"cp-fwd",    label:"↑", title:"Bring forward",  danger:false },
       { id:"cp-bck",    label:"↓", title:"Send backward",  danger:false },
       { id:"cp-del",    label:"✕", title:"Remove",         danger:true  },
@@ -357,10 +356,6 @@ const CanvasObjects = (() => {
     const o = objects.find(o => o.id === selectedId);
     if (!o) return;
 
-    if (id === "cp-rotate") {
-      startFreeRotate(o, e);
-      return;
-    }
 
     if (id === "cp-fwd" || id === "cp-bck") {
       // z values are always kept compact (no gaps), so sort → swap → apply
@@ -480,6 +475,100 @@ const CanvasObjects = (() => {
     outline.className = "sel-outline";
     outline.style.cssText = "position:absolute;inset:-3px;border:2px solid #378ADD;border-radius:3px;pointer-events:none;display:none;";
     el.appendChild(outline);
+
+    // Rotate handle — same reliable touch pattern as drag (setPointerCapture + touch-action:none)
+const rotHandle = document.createElement("div");
+rotHandle.className = "rotate-handle";
+rotHandle.style.cssText = [
+  "position:absolute",
+  "top:-28px", "left:50%", "transform:translateX(-50%)",
+  "width:26px", "height:26px",
+  "border-radius:50%",
+  "background:#378ADD",
+  "border:2px solid #fff",
+  "display:none",
+  "cursor:grab",
+  "touch-action:none",
+  "pointer-events:all",
+  "z-index:5",
+].join(";");
+rotHandle.textContent = "↻";
+Object.assign(rotHandle.style, {
+  fontSize: "14px",
+  color: "#fff",
+  display: "none",
+  alignItems: "center",
+  justifyContent: "center",
+});
+el.appendChild(rotHandle);
+
+rotHandle.addEventListener("pointerdown", e => {
+  e.preventDefault();
+  e.stopPropagation();
+  rotHandle.setPointerCapture(e.pointerId);
+  startFreeRotateCaptured(o, rotHandle, e);
+});
+
+function startFreeRotateCaptured(o, handleEl, triggerEvent) {
+  const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
+  if (!el) return;
+
+  const r  = el.getBoundingClientRect();
+  const cx = r.left + r.width  / 2;
+  const cy = r.top  + r.height / 2;
+  const a0 = Math.atan2(triggerEvent.clientY - cy, triggerEvent.clientX - cx);
+  const r0 = o.rotation;
+
+  document.body.style.cursor = "crosshair";
+
+  function onMove(ev) {
+    let d = Math.atan2(ev.clientY - cy, ev.clientX - cx) - a0;
+    if (d >  Math.PI) d -= 2 * Math.PI;
+    if (d < -Math.PI) d += 2 * Math.PI;
+    o.rotation = r0 + d;
+    el.style.transform = `rotate(${o.rotation}rad)`;
+  }
+  function onUp(ev) {
+    handleEl.releasePointerCapture(ev.pointerId);
+    handleEl.removeEventListener("pointermove", onMove);
+    handleEl.removeEventListener("pointerup", onUp);
+    document.body.style.cursor = "";
+    positionPanel();
+    Storage.save();
+  }
+
+  handleEl.addEventListener("pointermove", onMove);
+  handleEl.addEventListener("pointerup", onUp);
+}
+
+function selectObj(id) {
+  selectedId = id;
+  objects.forEach(o => {
+    const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
+    if (!el) return;
+    const isSel = o.id === id;
+    el.querySelector(".sel-outline").style.display = isSel ? "block" : "none";
+    const rh = el.querySelector(".rotate-handle");
+    if (rh) rh.style.display = isSel ? "flex" : "none";
+  });
+  updateInteractivity();
+  positionPanel();
+  hidePicker();
+}
+
+function deselect() {
+  selectedId = null;
+  objects.forEach(o => {
+    const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
+    if (!el) return;
+    el.querySelector(".sel-outline").style.display = "none";
+    const rh = el.querySelector(".rotate-handle");
+    if (rh) rh.style.display = "none";
+  });
+  hidePanel();
+  updateInteractivity();
+  hidePicker();
+}
 
 
     // ── Pointer handling ─────────────────
