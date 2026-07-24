@@ -192,44 +192,18 @@ button {
 }
 
 @media (max-height: 500px) {
+  html, body {
+    overflow-y: auto !important;
+    touch-action: pan-y !important;
+    height: auto !important;
+  }
 
   body {
     align-items: flex-start;
   }
 
-  .editor-frame.mode-landscape .canvas-wrap {
-    width: 320px;
-    max-width: 320px;
-    height: auto;
-    max-height: 230px;
-    aspect-ratio: 7 / 5;
-  }
-
   .editor-frame.mode-landscape {
-    padding: 8px;
-    gap: 16px;
     max-height: none;
-  }
-
-  .editor-frame.mode-landscape .top-ui {
-    height: 230px; /* match new smaller canvas height */
-  }
-
-  .editor-frame.mode-landscape .thumb-bar {
-    height: 230px;
-  }
-
-  .editor-frame.mode-landscape .top-ui button,
-  .editor-frame.mode-landscape .info-btn,
-  .editor-frame.mode-landscape .format-toggle-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 11px;
-  }
-
-  .editor-frame.mode-landscape .thumb-bar {
-    grid-template-columns: repeat(2, 36px) !important;
-    grid-template-rows: repeat(4, 36px) !important;
   }
 }
 
