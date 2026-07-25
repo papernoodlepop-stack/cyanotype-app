@@ -97,11 +97,13 @@ img {
 }
 .editor-frame.mode-landscape .category-strip {
   order: 2;
-  flex-direction: column; /* since landscape row layout needs vertical stacking here too, matching old thumb-bar behavior */
+  flex-direction: column;
   height: 360px;
   width: auto;
   overflow-y: auto;
   overflow-x: hidden;
+  margin-top: 0; 
+  margin-bottom: 0;
 }
 .editor-frame.mode-landscape .top-ui {
   order: 3;
