@@ -291,12 +291,21 @@ img {
 =========================== */
 .category-strip {
   display: flex;
-  gap: 8px;
+
+  width: 100%;
+  max-width: 360px;   /* same as canvas */
   overflow-x: auto;
+
+  gap: 8px;
   padding: 4px 2px;
+  box-sizing: border-box;
+
   -webkit-overflow-scrolling: touch;
-  margin-top: -12px;
-  margin-bottom: 20px;
+  scrollbar-width: none;
+}
+
+.category-strip::-webkit-scrollbar {
+  display: none;
 }
 
 .category-btn {
