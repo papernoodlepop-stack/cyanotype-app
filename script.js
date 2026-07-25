@@ -1437,3 +1437,5 @@ window.addEventListener("pageshow", e => {
   const { id } = Storage.loadReservation();
   if (id) Checkout.releaseOnAbandon();
 });
+
+document.addEventListener("pointerdown", () => console.log("ANY pointerdown fired"), true);
