@@ -224,9 +224,8 @@ button {
 
 .top-ui-row {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 24px;
 }
 
 .top-ui * {
