@@ -483,7 +483,8 @@ button {
 
 .library-modal {
   position: fixed;
-  width: 320px; /* fixed width that comfortably fits exactly 4 columns */
+  width: max-content;
+  max-width: min(320px, 90vw); /* caps out once content reaches ~4 columns wide */
   max-height: 80vh;
   background: rgba(20, 20, 20, 0.92);
   color: white;
@@ -507,7 +508,7 @@ button {
 
 .library-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* always exactly 4 columns, each sized to fit the fixed-width container */
+  grid-template-columns: repeat(auto-fit, 60px);
   gap: 15px;
   justify-content: center;
   width: 100%;
