@@ -483,16 +483,18 @@ button {
 
 .library-modal {
   position: fixed;
-  width: 260px; /* same width as help-popup, or adjust as needed */
+  width: 260px;
+  max-height: 80vh; /* cap so it doesn't grow beyond viewport, but can grow up to this */
   background: rgba(20, 20, 20, 0.92);
   color: white;
-  padding: 14px 16px;
+  padding: 14px 16px; /* padding all around, already here */
   border-radius: 12px;
   border: 1px solid rgba(255,255,255,0.15);
   font-size: 13px;
   line-height: 1.45;
   display: none;
   z-index: 100000;
+  overflow-y: auto; /* if content exceeds max-height, scroll instead of clipping */
 }
 
 .library-content {
@@ -512,8 +514,8 @@ button {
   display: grid;
   grid-template-columns: repeat(4, 60px);
   gap: 15px;
-  overflow-y: auto;
   justify-content: center;
+  /* removed: overflow-y: auto — outer .library-modal handles this now */
 }
 
 .thumb {
