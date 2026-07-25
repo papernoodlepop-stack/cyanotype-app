@@ -327,14 +327,6 @@ button {
   line-height: 1.4;
 }
 
-.top-ui-buttons {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
 .button-group {
   display: flex;
   border-radius: 10px;
