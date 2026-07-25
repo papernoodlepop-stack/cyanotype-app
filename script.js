@@ -719,9 +719,10 @@ pickerRotation =
     ].join(";");
     document.body.appendChild(picker);
     // Dismiss on outside tap
-    document.addEventListener("pointerdown", ev => {
-      if (!ev.target.closest("#layer-picker")) hidePicker();
-    }, true);
+    document.addEventListener("pointerdown", e => {
+  console.log("outside tap check, visible:", visible, "target:", e.target);
+  if (visible && !e.target.closest("#helpPopup") && !e.target.closest("#infoBtn")) hide();
+}, true);
   }
 
   function showPicker(e) {
