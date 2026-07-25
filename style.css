@@ -499,7 +499,8 @@ button {
 
 .library-modal {
   position: fixed;
-  width: 320px; /* fixed width sized for exactly 4 columns */
+  width: fit-content;
+  max-width: 90vw;
   max-height: 80vh;
   background: rgba(20, 20, 20, 0.92);
   color: white;
@@ -523,10 +524,11 @@ button {
 
 .library-grid {
   display: grid;
-  grid-template-columns: repeat(4, 60px);
-  gap: 15px;
+  grid-template-columns: repeat(auto-fit, 70px);
+  max-width: 316px;
+  gap: 12px;
   justify-content: center;
-  width: 100%;
+  width: fit-content;
 }
 
 .library-header {
