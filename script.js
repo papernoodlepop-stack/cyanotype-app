@@ -404,6 +404,43 @@ const CanvasObjects = (() => {
 
   const hidePanel = () => { if (panel) panel.style.display = "none"; };
 
+  let rotHandle = null;
+
+function ensureRotateHandle() {
+  if (rotHandle) return;
+  rotHandle = document.createElement("div");
+  rotHandle.className = "rotate-handle";
+  rotHandle.style.cssText = [
+    "position:fixed",
+    "width:24px", "height:24px",
+    "border-radius:50%",
+    "background:#378ADD",
+    "border:2px solid #fff",
+    "display:none",
+    "cursor:grab",
+    "touch-action:none",
+    "pointer-events:all",
+    "z-index:99999",
+    "align-items:center",
+    "justify-content:center",
+    "font-size:13px",
+    "color:#fff",
+  ].join(";");
+  rotHandle.textContent = "↻";
+  document.body.appendChild(rotHandle);
+
+  rotHandle.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    const o = objects.find(o => o.id === selectedId);
+    if (!o) return;
+    rotHandle.setPointerCapture(e.pointerId);
+    startFreeRotateCaptured(o, rotHandle, e);
+  });
+}
+
+const hideRotateHandle = () => { if (rotHandle) rotHandle.style.display = "none"; };
+
   function positionRotateHandle(o) {
   ensureRotateHandle();
   const cr = DOM.canvas.getBoundingClientRect();
@@ -489,42 +526,7 @@ const CanvasObjects = (() => {
     outline.style.cssText = "position:absolute;inset:-3px;border:2px solid #378ADD;border-radius:3px;pointer-events:none;display:none;";
     el.appendChild(outline);
 
-let rotHandle = null;
 
-function ensureRotateHandle() {
-  if (rotHandle) return;
-  rotHandle = document.createElement("div");
-  rotHandle.className = "rotate-handle";
-  rotHandle.style.cssText = [
-    "position:fixed",
-    "width:24px", "height:24px",
-    "border-radius:50%",
-    "background:#378ADD",
-    "border:2px solid #fff",
-    "display:none",
-    "cursor:grab",
-    "touch-action:none",
-    "pointer-events:all",
-    "z-index:99999",
-    "align-items:center",
-    "justify-content:center",
-    "font-size:13px",
-    "color:#fff",
-  ].join(";");
-  rotHandle.textContent = "↻";
-  document.body.appendChild(rotHandle);
-
-  rotHandle.addEventListener("pointerdown", e => {
-    e.preventDefault();
-    e.stopPropagation();
-    const o = objects.find(o => o.id === selectedId);
-    if (!o) return;
-    rotHandle.setPointerCapture(e.pointerId);
-    startFreeRotateCaptured(o, rotHandle, e);
-  });
-}
-
-const hideRotateHandle = () => { if (rotHandle) rotHandle.style.display = "none"; };
 
     // ── Pointer handling ─────────────────
     let lpTimer = null, didMove = false;
