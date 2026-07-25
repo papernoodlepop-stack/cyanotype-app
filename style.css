@@ -213,13 +213,13 @@ button {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  width: min(340px, 88vw);
+  width: min(360px, 88vw);
   margin: 0 auto;
   margin-bottom: 20px;
   padding: 8px 0;
   font-size: 14px;
   background: #222;
-  gap: 30px;
+  gap: 24px;
 }
 
 .top-ui-row {
