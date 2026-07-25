@@ -136,7 +136,7 @@ img {
   width: 40px; /* half of 80px, since 2 buttons per group */
   height: 44px;
   padding: 0;
-  font-size: 18px;
+  font-size: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -382,7 +382,7 @@ button {
   width: 36px;
   height: 36px;
   padding: 0;
-  font-size: 16px;
+  font-size: 20px;
   background: #333;
   color: #fff;
   border: none;
