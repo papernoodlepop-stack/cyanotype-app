@@ -290,7 +290,7 @@ const Storage = (() => {
 
   function undo() {
     if (undoStack.length < 2) return;
-    const selectedIndex = objects.findIndex(o => o.id === selectedId); // capture before rebuild
+    const selectedIndex = CanvasObjects.getSelectedIndex(); // ← fixed
     const current = undoStack.pop();
     redoStack.push(current);
     const prev = undoStack[undoStack.length - 1];
@@ -302,13 +302,14 @@ const Storage = (() => {
 
   function redo() {
     if (redoStack.length === 0) return;
+    const selectedIndex = CanvasObjects.getSelectedIndex();
     const next = redoStack.pop();
     undoStack.push(next);
     restoring = true;
     localStorage.setItem(K.design, next);
-    CanvasObjects.restore();
+    CanvasObjects.restore(selectedIndex);
     restoring = false;
-  }
+}
 
   function canUndo() { return undoStack.length >= 2; }
   function canRedo() { return redoStack.length > 0; }
@@ -816,6 +817,7 @@ picker.appendChild(header);
   return {
     hasBoxes()  { return objects.length > 0; },
     getAll()    { return [...objects]; },
+    getSelectedIndex() { return objects.findIndex(o => o.id === selectedId); },
     getLayout() {
   const cr = DOM.canvas.getBoundingClientRect();
   return objects.map(o => ({
@@ -871,7 +873,7 @@ picker.appendChild(header);
       typeSeq.fill(0);
     },
 
-    restore(preserveId = null) {
+    restore(preserveIndex = null) {
       const data = Storage.load(); if (!data) return;
       const cr = DOM.canvas.getBoundingClientRect();
       DOM.canvas.innerHTML = ""; objects = [];
@@ -1343,8 +1345,8 @@ setInterval(() => {
 //  LISTENERS
 // ─────────────────────────────────────────
 function attachListeners() {
-  DOM.undoBtn?.addEventListener("click", () => { Storage.undo(); UI.render(); });
-  DOM.redoBtn?.addEventListener("click", () => { Storage.redo(); UI.render(); });
+  DOM.undoBtn?.addEventListener("click",            () => { Storage.undo(); UI.render(); });
+  DOM.redoBtn?.addEventListener("click",            () => { Storage.redo(); UI.render(); });
   DOM.previewBtn?.addEventListener("click",         () => UI.openPreview());
   DOM.purchaseBtn?.addEventListener("click",        () => Checkout.begin());
   DOM.resetBtn?.addEventListener("click",           () => Actions.reset());
