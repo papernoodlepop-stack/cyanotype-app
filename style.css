@@ -407,6 +407,7 @@ button {
 .split-btn svg {
   width: 24px ;
   height: 24px ;
+  stroke-width: 2.5;
 }
 
 /* ===========================
