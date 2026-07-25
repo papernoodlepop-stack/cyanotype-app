@@ -404,6 +404,11 @@ button {
   pointer-events: none;
 }
 
+.split-btn svg {
+  width: 20px; 
+  height: 20px;
+}
+
 /* ===========================
   THUMB GRID
 =========================== */
