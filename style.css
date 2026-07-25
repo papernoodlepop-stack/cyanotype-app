@@ -185,7 +185,7 @@ body:has(.editor-frame.mode-landscape) #previewCanvas {
 }
 
 .top-ui,
-.thumb-bar,
+.category-strip,
 .canvas-container {
   display: block;
   width: 100%;
