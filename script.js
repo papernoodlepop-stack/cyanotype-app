@@ -1001,6 +1001,10 @@ const UI = (() => {
 
   function renderPreviewCanvas() {
     DOM.previewCanvas.innerHTML = "";
+
+    const isLandscape = document.querySelector(".editor-frame").classList.contains("mode-landscape");
+    DOM.previewCanvas.style.aspectRatio = isLandscape ? "7 / 5" : "5 / 7";
+    
     const cr    = DOM.canvas.getBoundingClientRect();
     const pr    = DOM.previewCanvas.getBoundingClientRect();
     const scale = pr.width / cr.width;

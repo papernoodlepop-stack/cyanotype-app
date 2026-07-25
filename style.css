@@ -169,6 +169,11 @@ img {
   flex-shrink: 0;
 }
 
+.editor-frame.mode-landscape ~ #previewModal #previewCanvas,
+body:has(.editor-frame.mode-landscape) #previewCanvas {
+  aspect-ratio: 7 / 5;
+}
+
 .editor-frame {
   width: min(360px, 88vw);
   display: flex;
