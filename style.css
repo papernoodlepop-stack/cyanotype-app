@@ -397,20 +397,6 @@ button {
 .landscape-preview { width: 70px; height: 50px; }
 
 
-.split-btn {
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  font-size: 16px;
-  background: #333;
-  color: #fff;
-  border: 2px solid rgba(255, 255, 255, 0.853);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .split-btn.left {
   border-right: 1px solid #666; /* thin divider between the two halves */
 }
