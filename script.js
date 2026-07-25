@@ -705,25 +705,6 @@ pickerRotation =
   picker.style.transformOrigin = "center center";
 }
 
-  function ensurePicker() {
-    if (picker) return;
-    picker = document.createElement("div");
-    picker.id = "layer-picker";
-    picker.style.cssText = [
-      "position:fixed", "display:none", "flex-direction:column",
-      "gap:2px", "padding:6px",
-      "background:#2f3542", "color:#fff", "border:1px solid #555",
-      "border-radius:8px", "z-index:99998", "min-width:150px",
-      "box-shadow:0 4px 14px rgba(0,0,0,0.55)",
-      "transition:transform 0.25s ease", 
-    ].join(";");
-    document.body.appendChild(picker);
-    // Dismiss on outside tap
-    document.addEventListener("pointerdown", e => {
-  if (visible && !e.target.closest("#helpPopup") && !e.target.closest("#infoBtn")) hide();
-}, true);
-  }
-
   function showPicker(e) {
     if (touchLocked || activeTouches > 1) return;
     ensurePicker();
