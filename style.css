@@ -23,7 +23,7 @@ body {
 
 .top-ui,
 .top-ui *,
-.thumb-bar,
+.category-strip,
 .thumb,
 .canvas-wrap,
 .canvas-container,
@@ -133,7 +133,7 @@ img {
 }
 
 .editor-frame.mode-landscape .canvas-container,
-.editor-frame.mode-landscape .thumb-bar,
+.editor-frame.mode-landscape .category-strip,
 .editor-frame.mode-landscape .top-ui {
   width: auto;
   height: auto;        /* was 100% — let each size to its actual content */
@@ -182,6 +182,10 @@ body:has(.editor-frame.mode-landscape) #previewCanvas {
   margin-top: -4px;
   padding-top: 12px;
   gap: 80px;
+}
+
+.canvas-container {
+  margin-top: -60px; /* pulls canvas closer to category-strip specifically, overriding the 80px gap above it */
 }
 
 .top-ui,
