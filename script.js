@@ -248,7 +248,7 @@ const Storage = (() => {
 
   let undoStack = [];
   let redoStack = [];
-  const MAX_HISTORY = 30;
+  const MAX_HISTORY = 2;
   let restoring = false; // guard so undo/redo itself doesn't push new history
 
   const save = () => {
