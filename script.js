@@ -1342,6 +1342,7 @@ const Library = (() => {
 
   function position(anchor) {
     modal.style.display = "block";
+    modal.style.border = "5px solid red";
     const ar = anchor.getBoundingClientRect();
     const mw = modal.offsetWidth, mh = modal.offsetHeight;
 
