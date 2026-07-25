@@ -92,19 +92,23 @@ Each thumbnail MUST track:
 - visual state (grey = empty, white = active)
 -->
 
-<div class="thumb-bar">
-
- <div class="thumb" data-index="0"></div>
- <div class="thumb" data-index="1"></div>
- <div class="thumb" data-index="2"></div>
- <div class="thumb" data-index="3"></div>
- <div class="thumb" data-index="4"></div>
- <div class="thumb" data-index="5"></div>
- <div class="thumb" data-index="6"></div>
- <div class="thumb" data-index="7"></div>
-
+<!-- Always visible category strip, replaces old thumb-bar -->
+<div class="category-strip">
+  <button class="category-btn" data-category="birds">Birds</button>
+  <button class="category-btn" data-category="nature">Nature</button>
+  <button class="category-btn" data-category="shapes">Shapes</button>
 </div>
 
+<!-- Library modal, opens when a category is tapped -->
+<div id="libraryModal" class="library-modal">
+  <div class="library-content">
+    <div class="library-header">
+      <h2 id="libraryModalTitle">Birds</h2>
+      <button id="closeLibraryBtn" class="info-btn">✕</button>
+    </div>
+    <div class="library-grid" id="libraryGrid"></div>
+  </div>
+</div>
 
 <!-- ===========================
     CANVAS LAYER (SOURCE OF TRUTH)

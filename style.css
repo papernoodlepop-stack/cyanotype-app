@@ -375,14 +375,75 @@ button {
 /* ===========================
   THUMB GRID
 =========================== */
-.thumb-bar {
+.category-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px;
+  -webkit-overflow-scrolling: touch;
+  margin-top: -12px;
+}
+
+.category-btn {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: #333;
+  color: #fff;
+  border: 1px solid #666;
+  white-space: nowrap;
+  cursor: pointer;
+  touch-action: pan-x;
+}
+
+.category-btn.active {
+  background: #555;
+}
+
+.library-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999998;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.library-modal.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.library-content {
+  width: min(360px, 90vw);
+  max-height: 80dvh;
+  background: #111;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.library-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+}
+
+.library-grid {
   display: grid;
   grid-template-columns: repeat(4, 60px);
-  grid-template-rows: repeat(2, 60px);
-  gap: 15px 30px;
-  margin-top: -12px;
+  gap: 15px;
+  overflow-y: auto;
   justify-content: center;
-  align-items: center;
 }
 
 .thumb {
