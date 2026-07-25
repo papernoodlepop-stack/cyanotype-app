@@ -54,6 +54,239 @@ img {
 }
 
 /* ===========================
+  TOP UI - BASE (PORTRAIT)
+=========================== */
+/* PORTRAIT MODE - Explicit selectors */
+.editor-frame.mode-portrait .top-ui {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  padding: 12px 0 8px 0;
+  gap: 16px;
+}
+
+.editor-frame.mode-portrait .top-ui-row:first-child {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 0;
+}
+
+.editor-frame.mode-portrait .top-ui-row:last-child {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.editor-frame.mode-portrait .top-ui-row:last-child .button-group:first-of-type {
+  flex-shrink: 0;
+  margin-right: 20px;
+}
+
+
+.editor-frame.mode-portrait .top-ui-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  justify-content: center;
+}
+
+.top-ui * {
+  touch-action: manipulation;
+}
+
+.top-ui span {
+  text-align: center;
+  line-height: 1.4;
+}
+
+.button-group {
+  display: flex;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.853); /* matches .info-btn's border style, wraps whole group */
+}
+
+.split-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 16px;
+  background: #333;
+  color: #fff;
+  border: none; /* no individual border — outline comes from button-group instead */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.split-btn.left {
+  border-right: 1px solid rgba(255, 255, 255, 0.3); /* thin divider between the two halves, more subtle than the outer border */
+}
+
+.info-btn {
+  width: auto;
+  height: 36px;  /* slightly taller for better touch target */
+  padding: 0 14px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.10);
+  border: 2px solid rgba(255, 255, 255, 0.853);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+
+.help-popup {
+  position: fixed;
+  width: 260px;
+
+  background: rgba(20, 20, 20, 0.92);
+  color: white;
+
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.15);
+
+  font-size: 13px;
+  line-height: 1.45;
+
+  display: none;
+  z-index: 100000;
+}
+
+.help-popup strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.help-popup p {
+  margin: 10px 0;
+}
+
+
+.help-title {
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 10px;
+  opacity: 0.9;
+}
+
+.help-section {
+  margin-bottom: 10px;
+}
+
+.help-bold {
+  font-weight: 600;
+  margin-bottom: 2px;
+  color: #ffffff;
+}
+
+.help-popup,
+.library-modal {
+    position: fixed;
+}
+
+.help-popup .modal-close-btn,
+.library-modal .modal-close-btn {
+    z-index: 1;
+}
+
+.format-toggle {
+  display: flex;
+  gap: 6px;
+}
+
+.format-toggle-btn {
+  font-size: 20px;
+  line-height: 1;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #666;
+  background: #333;
+  color: #fff;
+  cursor: pointer;
+}
+
+.format-toggle-btn.active {
+  background: #555;
+  color: #888;
+  cursor: default;
+  pointer-events: none;
+}
+
+.format-picker {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+}
+
+.format-picker-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  color: #fff;
+}
+
+.format-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: #333;
+  border: 2px solid #666;
+  border-radius: 10px;
+  padding: 16px 24px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.format-preview {
+  background: #7a7a7a;
+  border: 2px solid #000;
+}
+.portrait-preview  { width: 50px; height: 70px; }
+.landscape-preview { width: 70px; height: 50px; }
+
+
+.split-btn.active {
+  background: #555;
+  color: #888;
+  cursor: default;
+  pointer-events: none;
+}
+
+.split-btn svg {
+  width: 24px ;
+  height: 24px ;
+  stroke-width: 2.5;
+}
+
+/* ===========================
   EDITOR FRAME
 =========================== */
 
@@ -262,244 +495,6 @@ button {
   }
 }
 
-/* ===========================
-  TOP UI
-=========================== */
-/* ===========================
-  TOP UI - BASE (PORTRAIT)
-=========================== */
-.top-ui {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: min(360px, 88vw);
-  margin: 0 auto;
-  margin-bottom: 20px;
-  padding: 12px 0 8px 0;
-  gap: 16px;
-}
-
-/* Row 1: ReadFirst only (centered on top) */
-.top-ui-row:first-child {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  gap: 0;
-}
-
-/* Row 2: Format on far left, others centered */
-.top-ui-row:last-child {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  flex-wrap: wrap;
-}
-
-/* Format toggle on far left */
-.top-ui-row:last-child .button-group:first-of-type {
-  flex-shrink: 0;  /* Don't shrink */
-  margin-right: 20px;  /* Add space between format and other buttons */
-}
-
-
-/* Other buttons group - center them */
-.top-ui-buttons {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  flex-grow: 1;  /* Take available space */
-  justify-content: center;  /* Center the buttons within this group */
-}
-
-.top-ui * {
-  touch-action: manipulation;
-}
-
-.top-ui span {
-  text-align: center;
-  line-height: 1.4;
-}
-
-.button-group {
-  display: flex;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.853); /* matches .info-btn's border style, wraps whole group */
-}
-
-.split-btn {
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  font-size: 16px;
-  background: #333;
-  color: #fff;
-  border: none; /* no individual border — outline comes from button-group instead */
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.split-btn.left {
-  border-right: 1px solid rgba(255, 255, 255, 0.3); /* thin divider between the two halves, more subtle than the outer border */
-}
-
-.info-btn {
-  width: auto;
-  height: 36px;  /* slightly taller for better touch target */
-  padding: 0 14px;
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255,255,255,0.10);
-  border: 2px solid rgba(255, 255, 255, 0.853);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-
-.help-popup {
-  position: fixed;
-  width: 260px;
-
-  background: rgba(20, 20, 20, 0.92);
-  color: white;
-
-  padding: 14px 16px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.15);
-
-  font-size: 13px;
-  line-height: 1.45;
-
-  display: none;
-  z-index: 100000;
-}
-
-.help-popup strong {
-  display: block;
-  margin-bottom: 6px;
-}
-
-.help-popup p {
-  margin: 10px 0;
-}
-
-
-.help-title {
-  font-weight: 700;
-  font-size: 13px;
-  margin-bottom: 10px;
-  opacity: 0.9;
-}
-
-.help-section {
-  margin-bottom: 10px;
-}
-
-.help-bold {
-  font-weight: 600;
-  margin-bottom: 2px;
-  color: #ffffff;
-}
-
-.help-popup,
-.library-modal {
-    position: fixed;
-}
-
-.help-popup .modal-close-btn,
-.library-modal .modal-close-btn {
-    z-index: 1;
-}
-
-.format-toggle {
-  display: flex;
-  gap: 6px;
-}
-
-.format-toggle-btn {
-  font-size: 20px;
-  line-height: 1;
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: 1px solid #666;
-  background: #333;
-  color: #fff;
-  cursor: pointer;
-}
-
-.format-toggle-btn.active {
-  background: #555;
-  color: #888;
-  cursor: default;
-  pointer-events: none;
-}
-
-.format-picker {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999999;
-}
-
-.format-picker-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  color: #fff;
-}
-
-.format-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  background: #333;
-  border: 2px solid #666;
-  border-radius: 10px;
-  padding: 16px 24px;
-  color: #fff;
-  cursor: pointer;
-}
-
-.format-preview {
-  background: #7a7a7a;
-  border: 2px solid #000;
-}
-.portrait-preview  { width: 50px; height: 70px; }
-.landscape-preview { width: 70px; height: 50px; }
-
-
-.split-btn.active {
-  background: #555;
-  color: #888;
-  cursor: default;
-  pointer-events: none;
-}
-
-.split-btn svg {
-  width: 24px ;
-  height: 24px ;
-  stroke-width: 2.5;
-}
 
 /* ===========================
   THUMB GRID
