@@ -181,11 +181,11 @@ body:has(.editor-frame.mode-landscape) #previewCanvas {
   align-items: center;
   margin-top: -4px;
   padding-top: 12px;
-  gap: 80px;
+  gap: 12px;
 }
 
-.canvas-container {
-  margin-top: -60px; /* pulls canvas closer to category-strip specifically, overriding the 80px gap above it */
+.top-ui {
+  margin-bottom: 68px; /* pushes top-ui away from category-strip specifically, without affecting category-strip/canvas gap */
 }
 
 .top-ui,
