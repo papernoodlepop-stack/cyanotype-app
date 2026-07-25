@@ -78,6 +78,10 @@ img {
   justify-content: center;
 }
 
+.editor-frame.mode-landscape .format-toggle {
+  flex-direction: column;
+}
+
 .editor-frame.mode-landscape .canvas-container,
 .editor-frame.mode-landscape .category-strip,
 .editor-frame.mode-landscape .top-ui {
@@ -106,19 +110,14 @@ img {
   flex-direction: column;
   height: 360px;        /* match canvas-wrap's max-height */
   justify-content: space-between; /* or space-around, center, etc — distributes buttons along that height */
-  width: 80px;
 }
 
-/* Stack all buttons vertically in landscape */
 .editor-frame.mode-landscape .top-ui-row {
   flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
   gap: 8px;
-  width: 100%;
 }
 
-/* Ensure all buttons are uniform size in landscape */
 .editor-frame.mode-landscape .top-ui button,
 .editor-frame.mode-landscape .info-btn {
   width: 80px;
@@ -131,10 +130,8 @@ img {
   border-radius: 8px;
 }
 
-/* Undo/Redo group stays horizontal but narrow */
 .editor-frame.mode-landscape .button-group {
   width: 80px;
-  height: 44px;
 }
 
 .editor-frame.mode-landscape .split-btn {
@@ -146,19 +143,6 @@ img {
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-}
-
-.editor-frame.mode-landscape .split-btn svg {
-  width: 20px;
-  height: 20px;
-  stroke-width: 2.5;
-}
-
-
-/* Format toggle in landscape - stack vertically */
-.editor-frame.mode-landscape .format-toggle {
-  flex-direction: column;
-  gap: 4px;
 }
 
 
@@ -541,7 +525,7 @@ button {
 .library-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, 70px);
-  max-width: 316px;
+  max-width: 316px; /* 4 x 70px + 3 x 12px */
   gap: 12px;
   justify-content: center;
   width: fit-content;
