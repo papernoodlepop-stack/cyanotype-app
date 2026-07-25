@@ -274,11 +274,12 @@ button {
   margin: 0 auto;
   margin-bottom: 20px;
   padding: 12px 0 8px 0;
-  gap: 16px;  /* space between ReadFirst row and button row */
+  gap: 16px;
 }
 
 .top-ui-row:first-child {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -290,9 +291,9 @@ button {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 10px;  /* space between buttons in the row */
+  gap: 10px;
   width: 100%;
-  flex-wrap: wrap;  /* allows wrapping if screen is too narrow */
+  flex-wrap: wrap;
 }
 
 
