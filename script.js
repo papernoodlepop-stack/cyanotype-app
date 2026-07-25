@@ -1387,7 +1387,9 @@ function attachListeners() {
   DOM.expiredOkBtn?.addEventListener("click",       () => UI.closeModals());
   DOM.expiredPurchaseBtn?.addEventListener("click", () => { UI.closeModals(); Checkout.begin(); });
 
-  document.getElementById("closeHelpBtn")?.addEventListener("click", () => HelpPopup.hide());
+  const closeHelpBtn = document.getElementById("closeHelpBtn");
+console.log("closeHelpBtn found:", closeHelpBtn);
+closeHelpBtn?.addEventListener("click", () => { console.log("close clicked"); HelpPopup.hide(); });
 
   if (DOM.infoBtn) {
   DOM.infoBtn.addEventListener("pointerdown", e => {
