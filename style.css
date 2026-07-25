@@ -60,48 +60,45 @@ img {
 .editor-frame.mode-portrait .top-ui {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   width: 100%;
-  margin: 0 auto;
-  margin-bottom: 20px;
+  margin: 0 auto 20px;
   padding: 12px 0 8px 0;
   gap: 16px;
 }
 
+/* READ FIRST row */
 .editor-frame.mode-portrait .top-ui-row:first-child {
   display: flex;
-  flex-direction: row;
   justify-content: center;
   align-items: center;
   width: 100%;
-  gap: 0;
 }
 
 .editor-frame.mode-portrait .top-ui-row:last-child {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  gap: 10px;
   width: 100%;
-  flex-wrap: wrap;
+  gap: 10px;
+  flex-wrap: nowrap;
 }
-
-.editor-frame.mode-portrait .top-ui-row:last-child .button-group:first-of-type {
-  flex-shrink: 0;
-  margin-right: 20px;
-}
-
 
 .editor-frame.mode-portrait .top-ui-buttons {
   display: flex;
   flex-direction: row;
+  justify-content: center;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
-  flex-grow: 1;
-  justify-content: center;
+  flex-wrap: nowrap;
+  width: auto;
+}
+
+/* Prevent buttons shrinking */
+.editor-frame.mode-portrait .top-ui-buttons > *,
+.editor-frame.mode-portrait .top-ui-row:last-child > * {
+  flex-shrink: 0;
 }
 
 .top-ui * {
@@ -212,8 +209,10 @@ img {
 }
 
 .format-toggle {
-  display: flex;
-  gap: 6px;
+    display: flex;
+    gap: 6px;
+    margin-right: 10px;
+    flex-shrink: 0;
 }
 
 .format-toggle-btn {
@@ -284,215 +283,6 @@ img {
   width: 24px ;
   height: 24px ;
   stroke-width: 2.5;
-}
-
-/* ===========================
-  EDITOR FRAME
-=========================== */
-
-/* Canvas shape driven by explicit class, not orientation media query */
-.editor-frame.mode-portrait .canvas-wrap {
-  aspect-ratio: 5 / 7;
-}
-.editor-frame.mode-landscape .canvas-wrap {
-  aspect-ratio: 7 / 5;
-}
-
-/* Layout reflow also driven by the class, not @media(orientation) */
-.editor-frame.mode-landscape {
-  flex-direction: row;
-  width: auto;
-  max-width: 100vw;
-  height: auto;        /* was 100dvh — let content size itself instead of stretching to fill */
-  max-height: 100dvh;
-  padding: 80px 8px 8px;
-  gap: 40px;
-  align-items: flex-start;
-  justify-content: center;
-}
-
-.editor-frame.mode-landscape .format-toggle {
-  flex-direction: column;
-}
-
-.editor-frame.mode-landscape .canvas-container,
-.editor-frame.mode-landscape .category-strip,
-.editor-frame.mode-landscape .top-ui {
-  width: auto;
-  height: auto;        /* was 100% — let each size to its actual content */
-}
-
-.editor-frame.mode-landscape .canvas-container {
-  order: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.editor-frame.mode-landscape .category-strip {
-  order: 2;
-  flex-direction: column;
-  height: 360px;
-  width: auto;
-  overflow-y: auto;
-  overflow-x: hidden;
-  margin-top: 0; 
-  margin-bottom: 0;
-}
-.editor-frame.mode-landscape .top-ui {
-  order: 3;
-  flex-direction: column;
-  height: 360px;
-  justify-content: space-between;
-  width: 80px;
-}
-
-.editor-frame.mode-landscape .top-ui-row {
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-}
-
-.editor-frame.mode-landscape .top-ui button,
-.editor-frame.mode-landscape .info-btn {
-  width: 80px;
-  height: 44px;
-  padding: 0;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-}
-
-.editor-frame.mode-landscape .button-group {
-  width: 80px;
-  height: 44px;
-}
-
-.editor-frame.mode-landscape .split-btn {
-  width: 40px;
-  height: 44px;
-  padding: 0;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-}
-
-.editor-frame.mode-landscape .split-btn svg {
-  width: 20px;
-  height: 20px;
-  stroke-width: 2.5;
-}
-
-
-.editor-frame.mode-landscape .canvas-wrap {
-  width: 504px;
-  height: auto;
-  max-width: 504px;
-  max-height: 360px;
-  aspect-ratio: 7 / 5;
-  flex-shrink: 0;
-}
-
-.editor-frame.mode-landscape ~ #previewModal #previewCanvas,
-body:has(.editor-frame.mode-landscape) #previewCanvas {
-  aspect-ratio: 7 / 5;
-}
-
-.editor-frame {
-  width: min(360px, 88vw);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: -4px;
-  padding-top: 12px;
-  gap: 12px;
-}
-
-.category-strip,
-.canvas-container {
-  display: block;
-  width: 100%;
-}
-
-button {
-  cursor: pointer;
-  touch-action: manipulation;
-}
-
-.modal-close-btn {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-
-  width: 44px;
-  height: 44px;
-
-  border-radius: 50%;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.3);
-
-  color: #fff;
-  font-size: 16px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-  z-index: 1;
-}
-
-
-@media (max-height: 500px) {
-  html {
-    overflow-y: auto !important;
-    height: auto !important;
-  }
-
-  body {
-    touch-action: pan-y !important; /* only body-level background allows scroll */
-    align-items: flex-start;
-    overflow-y: auto;
-    height: auto !important;
-  }
-
-  .editor-frame.mode-landscape {
-    max-height: none;
-  }
-
-  /* Canvas and its contents keep full manual touch control — no pan-y here */
-  .canvas-wrap,
-  .box {
-    touch-action: none !important;
-  }
-}
-
-@media (orientation: portrait) {
-  .editor-frame.mode-landscape {
-    max-width: none;
-    max-height: none;
-    width: max-content; /* size to actual content width so there's something to scroll to */
-  }
-
-  body:has(.editor-frame.mode-landscape) {
-    overflow-x: auto !important;
-    overflow-y: hidden;
-    touch-action: pan-x !important; /* horizontal scroll gesture only */
-    width: 100vw;
-    height: 100dvh;
-    align-items: flex-start;
-    justify-content: flex-start;
-  }
-
-  .editor-frame.mode-landscape .canvas-wrap,
-  .editor-frame.mode-landscape .box {
-    touch-action: none !important;
-  }
 }
 
 
