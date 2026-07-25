@@ -1,7 +1,6 @@
 // ─────────────────────────────────────────
 //  CONFIG
 // ─────────────────────────────────────────
-console.log("SCRIPT LOADED")
 const CONFIG = {
   api:          "",
   syncInterval: 1_000,
@@ -721,7 +720,6 @@ pickerRotation =
     document.body.appendChild(picker);
     // Dismiss on outside tap
     document.addEventListener("pointerdown", e => {
-  console.log("outside tap check, visible:", visible, "target:", e.target);
   if (visible && !e.target.closest("#helpPopup") && !e.target.closest("#infoBtn")) hide();
 }, true);
   }
@@ -1389,9 +1387,9 @@ function attachListeners() {
   DOM.expiredOkBtn?.addEventListener("click",       () => UI.closeModals());
   DOM.expiredPurchaseBtn?.addEventListener("click", () => { UI.closeModals(); Checkout.begin(); });
 
-const closeHelpBtn = document.getElementById("closeHelpBtn");
-console.log("closeHelpBtn found:", closeHelpBtn);
-closeHelpBtn?.addEventListener("click", () => { console.log("close clicked"); HelpPopup.hide(); });
+document.getElementById("closeHelpBtn")?.addEventListener("click", () => {
+  document.getElementById("helpPopup").style.display = "none";
+});
 
   if (DOM.infoBtn) {
   DOM.infoBtn.addEventListener("pointerdown", e => {
@@ -1437,5 +1435,3 @@ window.addEventListener("pageshow", e => {
   const { id } = Storage.loadReservation();
   if (id) Checkout.releaseOnAbandon();
 });
-
-document.addEventListener("pointerdown", () => console.log("ANY pointerdown fired"), true);
