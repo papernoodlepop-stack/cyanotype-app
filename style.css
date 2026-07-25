@@ -211,19 +211,22 @@ button {
   .editor-frame.mode-landscape {
     max-width: none;
     max-height: none;
+    width: max-content; /* size to actual content width so there's something to scroll to */
   }
 
   body:has(.editor-frame.mode-landscape) {
-    overflow: auto !important;
-    touch-action: pan-x pan-y !important;
-    height: auto !important;
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    touch-action: pan-x !important; /* horizontal scroll gesture only */
+    width: 100vw;
+    height: 100dvh;
     align-items: flex-start;
     justify-content: flex-start;
   }
 
   .editor-frame.mode-landscape .canvas-wrap,
   .editor-frame.mode-landscape .box {
-    touch-action: none !important; /* keep canvas interactions fully manual, same as before */
+    touch-action: none !important;
   }
 }
 
