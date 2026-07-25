@@ -265,6 +265,9 @@ button {
 /* ===========================
   TOP UI
 =========================== */
+/* ===========================
+  TOP UI - BASE (PORTRAIT)
+=========================== */
 .top-ui {
   display: flex;
   flex-direction: column;
@@ -277,6 +280,7 @@ button {
   gap: 16px;
 }
 
+/* Row 1: ReadFirst only (centered on top) */
 .top-ui-row:first-child {
   display: flex;
   flex-direction: row;
@@ -286,6 +290,7 @@ button {
   gap: 0;
 }
 
+/* Row 2: Format on far left, others centered */
 .top-ui-row:last-child {
   display: flex;
   flex-direction: row;
@@ -294,8 +299,24 @@ button {
   gap: 10px;
   width: 100%;
   flex-wrap: wrap;
+  position: relative;
+  padding: 0 50px;  /* Make room for absolute format buttons */
 }
 
+/* Format toggle on far left */
+.top-ui-row:last-child .button-group:first-of-type {
+  position: absolute;
+  left: 10px;
+}
+
+/* Other buttons group */
+.top-ui-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
 
 .top-ui * {
   touch-action: manipulation;
@@ -306,10 +327,12 @@ button {
   line-height: 1.4;
 }
 
-.top-ui button {
-  padding: 5px 10px;
-  font-size: 14px;
-  border-radius: 12px;
+.top-ui-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .button-group {
