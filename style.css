@@ -397,10 +397,6 @@ button {
 .landscape-preview { width: 70px; height: 50px; }
 
 
-.split-btn.left {
-  border-right: 1px solid #666; /* thin divider between the two halves */
-}
-
 .split-btn.active {
   background: #555;
   color: #888;
