@@ -391,15 +391,24 @@ const CanvasObjects = (() => {
 
     const cr = DOM.canvas.getBoundingClientRect();
     const cx = cr.left + o.x + o.w / 2;
-    const cy = cr.top  + o.y;
+    const topY    = cr.top + o.y;           // top edge of object
+    const bottomY = cr.top + o.y + o.h;     // bottom edge of object
 
     panel.style.visibility = "hidden";
     panel.style.display    = "flex";
     const pw = panel.offsetWidth, ph = panel.offsetHeight;
     panel.style.visibility = "";
 
-    panel.style.left = `${clamp(cx - pw / 2, 8, window.innerWidth  - pw - 8)}px`;
-    panel.style.top  = `${Math.max(8, cy - ph - 40)}px`; // increased offset from -12 to -40, more clearance from handle
+    panel.style.left = `${clamp(cx - pw / 2, 8, window.innerWidth - pw - 8)}px`;
+
+    const spaceAbove = topY - 8; // available room above object, minus small margin
+    if (spaceAbove >= ph + 40) {
+      // enough room above — place it there, with clearance from the rotate handle
+      panel.style.top = `${topY - ph - 40}px`;
+    } else {
+      // not enough room above — place below the object instead
+      panel.style.top = `${Math.min(window.innerHeight - ph - 8, bottomY + 12)}px`;
+    }
 }
 
   const hidePanel = () => { if (panel) panel.style.display = "none"; };
