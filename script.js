@@ -1340,27 +1340,45 @@ const Library = (() => {
   const titleEl = document.getElementById("libraryModalTitle");
   let currentCategory = null;
 
-  function open(category) {
+  function position(anchor) {
+    modal.style.display = "block";
+    const ar = anchor.getBoundingClientRect();
+    const mw = modal.offsetWidth, mh = modal.offsetHeight;
+
+    let left = ar.left + ar.width / 2 - mw / 2;
+    let top  = ar.bottom + 10;
+
+    left = clamp(left, 8, window.innerWidth - mw - 8);
+    if (top + mh > window.innerHeight - 8) top = ar.top - mh - 10;
+
+    modal.style.left = `${left}px`;
+    modal.style.top  = `${top}px`;
+  }
+
+  function open(category, anchor) {
     currentCategory = category;
     titleEl.textContent = category.charAt(0).toUpperCase() + category.slice(1);
     Thumbs.renderInto(grid, category);
-    modal.classList.add("active");
+    position(anchor);
   }
 
   function close() {
-    modal.classList.remove("active");
+    modal.style.display = "none";
     currentCategory = null;
   }
 
   function refresh() {
-    // Call after placing/removing an object, so counts stay accurate if modal reopens
     if (currentCategory) Thumbs.renderInto(grid, currentCategory);
   }
 
   document.querySelectorAll(".category-btn").forEach(btn => {
-    btn.addEventListener("click", () => open(btn.dataset.category));
+    btn.addEventListener("click", () => open(btn.dataset.category, btn));
   });
   document.getElementById("closeLibraryBtn")?.addEventListener("click", close);
+
+  document.addEventListener("pointerdown", e => {
+    if (modal.style.display === "block" && !e.target.closest("#libraryModal") && !e.target.closest(".category-btn")) close();
+  }, true);
 
   return { open, close, refresh };
 })();

@@ -483,16 +483,16 @@ button {
 
 .library-modal {
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999998;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
+  width: 260px; /* same width as help-popup, or adjust as needed */
+  background: rgba(20, 20, 20, 0.92);
+  color: white;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.15);
+  font-size: 13px;
+  line-height: 1.45;
+  display: none;
+  z-index: 100000;
 }
 
 .library-modal.active {
