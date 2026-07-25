@@ -37,11 +37,12 @@
         <div class="help-bold">Remove</div>
         Click X button on your selected object's control panel.
       </div>
-      <div class="help-section">
-        <div class="help-bold">Close ⓘ</div>
-        Tap ReadFirst again or tap outside the panel.
-      </div>
-    </div>
+
+    <div id="helpPopup" class="help-popup">
+  <button id="closeHelpBtn" class="modal-close-btn">✕</button>
+  <div class="help-title">How to Use</div>
+  ...
+</div>
 
     <button type="button" id="previewBtn" class="info-btn" title="Preview">Preview</button>
   </div>
@@ -102,11 +103,12 @@ Each thumbnail MUST track:
   <div class="library-content">
     <div class="library-header">
       <h2 id="libraryModalTitle">Birds</h2>
-      <button id="closeLibraryBtn" class="info-btn">✕</button>
+      <button id="closeLibraryBtn" class="modal-close-btn">✕</button>
     </div>
     <div class="library-grid" id="libraryGrid"></div>
   </div>
 </div>
+
 
 <!-- ===========================
     CANVAS LAYER (SOURCE OF TRUTH)
