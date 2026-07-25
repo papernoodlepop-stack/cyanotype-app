@@ -211,13 +211,12 @@ button {
   .editor-frame.mode-landscape {
     max-width: none;
     max-height: none;
-    width: max-content; /* size to actual content width so there's something to scroll to */
+    width: max-content;
   }
 
   body:has(.editor-frame.mode-landscape) {
-    overflow-x: auto !important;
-    overflow-y: hidden;
-    touch-action: pan-x !important; /* horizontal scroll gesture only */
+    overflow: auto !important; /* both directions */
+    touch-action: pan-x pan-y !important; /* both directions */
     width: 100vw;
     height: 100dvh;
     align-items: flex-start;
