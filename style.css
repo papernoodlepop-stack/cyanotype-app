@@ -108,14 +108,17 @@ img {
 .editor-frame.mode-landscape .top-ui {
   order: 3;
   flex-direction: column;
-  height: 360px;        /* match canvas-wrap's max-height */
-  justify-content: space-between; /* or space-around, center, etc — distributes buttons along that height */
+  height: 360px;
+  justify-content: space-between;
+  width: 80px;
 }
 
 .editor-frame.mode-landscape .top-ui-row {
   flex-direction: column;
   justify-content: flex-start;
+  align-items: center;
   gap: 8px;
+  width: 100%;
 }
 
 .editor-frame.mode-landscape .top-ui button,
@@ -132,10 +135,11 @@ img {
 
 .editor-frame.mode-landscape .button-group {
   width: 80px;
+  height: 44px;
 }
 
 .editor-frame.mode-landscape .split-btn {
-  width: 40px; /* half of 80px, since 2 buttons per group */
+  width: 40px;
   height: 44px;
   padding: 0;
   font-size: 18px;
@@ -143,6 +147,12 @@ img {
   align-items: center;
   justify-content: center;
   border-radius: 8px;
+}
+
+.editor-frame.mode-landscape .split-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.5;
 }
 
 

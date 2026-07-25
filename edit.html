@@ -14,39 +14,17 @@
     TOP UI (CONTROL LAYER)
 =========================== -->
 <div class="top-ui">
-
+  <!-- Row 1: ReadFirst -->
   <div class="top-ui-row">
-    <button type="button" id="startOverBtn" class="info-btn" title="StartOver">StartOver</button>
     <button id="infoBtn" class="info-btn">ReadFirst</button>
-
-    <div id="helpPopup" class="help-popup">
-      <button id="closeHelpBtn" class="modal-close-btn">✕</button>
-      <div class="help-title">How to Use</div>
-
-      <div class="help-section">
-        <div class="help-bold">Format</div>
-        Defaults to portrait. Use the ↕/↔ buttons to switch to landscape anytime.
-      </div>
-
-      <div class="help-section">
-        <div class="help-bold">Place objects</div>
-        Tap a thumbnail to add it to the canvas.
-      </div>
-
-      <div class="help-section">
-        <div class="help-bold">Rotate</div>
-        Drag the rotation button on your selected object's control panel.
-      </div>
-
-      <div class="help-section">
-        <div class="help-bold">Remove</div>
-        Click X button on your selected object's control panel.
-      </div>
-    </div>
-
-    <button type="button" id="previewBtn" class="info-btn" title="Preview">Preview</button>
   </div>
 
+  <!-- Row 2: StartOver -->
+  <div class="top-ui-row">
+    <button type="button" id="startOverBtn" class="info-btn" title="StartOver">StartOver</button>
+  </div>
+
+  <!-- Row 3: Format (Portrait/Landscape toggle) -->
   <div class="top-ui-row">
     <div class="button-group">
       <button id="toPortraitBtn" class="split-btn left" title="Portrait">
@@ -60,7 +38,10 @@
         </svg>
       </button>
     </div>
+  </div>
 
+  <!-- Row 4: Undo/Redo -->
+  <div class="top-ui-row">
     <div class="button-group">
       <button id="undoBtn" class="split-btn left" title="Undo">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -75,8 +56,11 @@
     </div>
   </div>
 
+  <!-- Row 5: Preview -->
+  <div class="top-ui-row">
+    <button type="button" id="previewBtn" class="info-btn" title="Preview">Preview</button>
+  </div>
 </div>
-
 
 <!-- ===========================
     THUMBNAIL INVENTORY LAYER
