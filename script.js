@@ -289,15 +289,16 @@ const Storage = (() => {
   }
 
   function undo() {
-    if (undoStack.length < 2) return; // need at least current + previous state
+    if (undoStack.length < 2) return;
+    const selectedIndex = objects.findIndex(o => o.id === selectedId); // capture before rebuild
     const current = undoStack.pop();
     redoStack.push(current);
     const prev = undoStack[undoStack.length - 1];
     restoring = true;
     localStorage.setItem(K.design, prev);
-    CanvasObjects.restore();
+    CanvasObjects.restore(selectedIndex);
     restoring = false;
-  }
+}
 
   function redo() {
     if (redoStack.length === 0) return;
@@ -870,7 +871,7 @@ picker.appendChild(header);
       typeSeq.fill(0);
     },
 
-    restore() {
+    restore(preserveId = null) {
       const data = Storage.load(); if (!data) return;
       const cr = DOM.canvas.getBoundingClientRect();
       DOM.canvas.innerHTML = ""; objects = [];
@@ -878,6 +879,7 @@ picker.appendChild(header);
 
       hidePanel();
       hidePicker();
+      hideRotateHandle();
 
       (data.layout || []).forEach(saved => {
         const itemIdx = Number(saved.origin);
@@ -899,7 +901,12 @@ picker.appendChild(header);
 
       Thumbs.setCounts(data.thumbCounts);
       updateInteractivity();
-    },
+
+      // Reselect if requested and the object still exists in the restored layout
+      if (preserveIndex !== null && preserveIndex >= 0 && objects[preserveIndex]) {
+  selectObj(objects[preserveIndex].id);
+}
+},
       deselect, hidePanel,
   };
 })();
