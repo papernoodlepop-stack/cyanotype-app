@@ -5,6 +5,8 @@ const CONFIG = {
   api:          "",
   syncInterval: 1_000,
 
+  thumbCategories: ["birds", "birds", "nature", "nature", "shapes", "shapes", "birds", "nature"],
+
   thumbLimits: [1, 1, 5, 1, 3, 1, 5, 2],
 
   thumbImages: [
@@ -144,7 +146,6 @@ const DOM = {
   infoBtn:            document.getElementById("infoBtn"),
   undoBtn:            document.getElementById("undoBtn"),
   redoBtn:            document.getElementById("redoBtn"),
-  thumbs:             document.querySelectorAll(".thumb"),
 };
 
 // ─────────────────────────────────────────
@@ -193,29 +194,30 @@ const State = (() => {
 const Thumbs = (() => {
   let counts = [...CONFIG.thumbLimits];
 
-  function render() {
-    const disabled = State.get("checkoutInProgress");
-    DOM.thumbs.forEach((el, i) => {
+  // Renders thumbs for a specific category into a given container (the modal grid)
+  function renderInto(container, category) {
+    container.innerHTML = "";
+    CONFIG.thumbImages.forEach((src, i) => {
+      if (CONFIG.thumbCategories[i] !== category) return;
+
+      const el = document.createElement("div");
+      el.className = "thumb";
+      el.dataset.index = i;
+
       const empty = counts[i] <= 0;
       el.classList.toggle("empty", empty);
-      el.style.pointerEvents      = (empty || disabled) ? "none" : "auto";
-      el.style.opacity            = (empty || disabled) ? "0.4" : "1";
-      el.style.backgroundImage    = `url('${CONFIG.thumbImages[i]}')`;
+      el.style.pointerEvents      = empty ? "none" : "auto";
+      el.style.opacity            = empty ? "0.4" : "1";
+      el.style.backgroundImage    = `url('${src}')`;
       el.style.backgroundSize     = "contain";
       el.style.backgroundRepeat   = "no-repeat";
       el.style.backgroundPosition = "center";
       el.style.cursor             = empty ? "default" : "pointer";
       el.style.position           = "relative";
 
-      // Dot indicator bar
-      let bar = el.querySelector(".thumb-dots");
-      if (!bar) {
-        bar = document.createElement("div");
-        bar.className = "thumb-dots";
-        bar.style.cssText = "position:absolute;bottom:3px;left:50%;transform:translateX(-50%);display:flex;gap:3px;pointer-events:none;";
-        el.appendChild(bar);
-      }
-      bar.innerHTML = "";
+      const bar = document.createElement("div");
+      bar.className = "thumb-dots";
+      bar.style.cssText = "position:absolute;bottom:3px;left:50%;transform:translateX(-50%);display:flex;gap:3px;pointer-events:none;";
       const limit = CONFIG.thumbLimits[i];
       if (limit > 1) {
         for (let d = 0; d < limit; d++) {
@@ -224,16 +226,27 @@ const Thumbs = (() => {
           bar.appendChild(dot);
         }
       }
+      el.appendChild(bar);
+
+      el.addEventListener("pointerdown", e => {
+        if (blockedByTouchLock()) return;
+        e.preventDefault();
+        if (counts[i] <= 0) return;
+        Actions.placeThumb(i);
+        Library.close();
+      });
+
+      container.appendChild(el);
     });
   }
 
-  function use(i)     { if (!counts[i]) return false; counts[i]--; render(); return true; }
-  function release(i) { counts[i] = Math.min(CONFIG.thumbLimits[i], counts[i] + 1); render(); }
-  function getCounts()       { return [...counts]; }
-  function setCounts(saved)  { counts = saved ? [...saved] : [...CONFIG.thumbLimits]; render(); }
-  function reset()           { counts = [...CONFIG.thumbLimits]; render(); }
+  function use(i)     { if (!counts[i]) return false; counts[i]--; return true; }
+  function release(i) { counts[i] = Math.min(CONFIG.thumbLimits[i], counts[i] + 1); }
+  function getCounts()      { return [...counts]; }
+  function setCounts(saved) { counts = saved ? [...saved] : [...CONFIG.thumbLimits]; }
+  function reset()          { counts = [...CONFIG.thumbLimits]; }
 
-  return { render, use, release, getCounts, setCounts, reset };
+  return { renderInto, use, release, getCounts, setCounts, reset };
 })();
 
 // ─────────────────────────────────────────
@@ -417,6 +430,7 @@ const CanvasObjects = (() => {
 
     if (id === "cp-del") {
       Thumbs.release(o.itemIdx);
+      Library.refresh();
       DOM.canvas.querySelector(`[data-id="${o.id}"]`)?.remove();
       objects.splice(objects.indexOf(o), 1);
       selectedId = null;
@@ -977,12 +991,6 @@ const UI = (() => {
     setBtn(DOM.undoBtn, !Storage.canUndo());
     setBtn(DOM.redoBtn, !Storage.canRedo());
     DOM.purchaseBtn?.classList.toggle("locked", blocked);
-    Thumbs.render();
-
-    if (DOM.slotCaption && DOM.slotCaptionText) {
-      DOM.slotCaption.classList.toggle("visible", blocked);
-      if (!blocked) DOM.slotCaptionText.textContent = "";
-    }
   }
 
   function closeModals() {
@@ -1004,7 +1012,7 @@ const UI = (() => {
 
     const isLandscape = document.querySelector(".editor-frame").classList.contains("mode-landscape");
     DOM.previewCanvas.style.aspectRatio = isLandscape ? "7 / 5" : "5 / 7";
-    
+
     const cr    = DOM.canvas.getBoundingClientRect();
     const pr    = DOM.previewCanvas.getBoundingClientRect();
     const scale = pr.width / cr.width;
@@ -1333,9 +1341,41 @@ const Actions = {
   placeThumb(i) {
     if (State.get("checkoutInProgress")) return;
     if (!Thumbs.use(i)) return;
-    CanvasObjects.place(i); UI.render();
+    CanvasObjects.place(i);
+    UI.render();
   },
 };
+
+const Library = (() => {
+  const modal = document.getElementById("libraryModal");
+  const grid = document.getElementById("libraryGrid");
+  const titleEl = document.getElementById("libraryModalTitle");
+  let currentCategory = null;
+
+  function open(category) {
+    currentCategory = category;
+    titleEl.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+    Thumbs.renderInto(grid, category);
+    modal.classList.add("active");
+  }
+
+  function close() {
+    modal.classList.remove("active");
+    currentCategory = null;
+  }
+
+  function refresh() {
+    // Call after placing/removing an object, so counts stay accurate if modal reopens
+    if (currentCategory) Thumbs.renderInto(grid, currentCategory);
+  }
+
+  document.querySelectorAll(".category-btn").forEach(btn => {
+    btn.addEventListener("click", () => open(btn.dataset.category));
+  });
+  document.getElementById("closeLibraryBtn")?.addEventListener("click", close);
+
+  return { open, close, refresh };
+})();
 
 // ─────────────────────────────────────────
 //  RESERVATION CLOCK
@@ -1359,9 +1399,6 @@ function attachListeners() {
   DOM.expiredOkBtn?.addEventListener("click",       () => UI.closeModals());
   DOM.expiredPurchaseBtn?.addEventListener("click", () => { UI.closeModals(); Checkout.begin(); });
 
-  DOM.thumbs.forEach((el, i) =>
-    el.addEventListener("pointerdown", e => { if (blockedByTouchLock()) return; e.preventDefault(); Actions.placeThumb(i); })
-  );
 
   if (DOM.infoBtn) {
   DOM.infoBtn.addEventListener("pointerdown", e => {
