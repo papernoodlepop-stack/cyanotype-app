@@ -1090,46 +1090,6 @@ const UI = (() => {
   return { render, closeModals, openPreview, openSuccess, openExpired, updatePurchaseButton };
 })();
 
-const HelpPopup = (() => {
-  const popup = document.getElementById("helpPopup");
-  if (!popup) return { toggle(){}, hide(){} };
-
-  document.body.appendChild(popup);
-  popup.style.position = "fixed";
-
-  let visible = false;
-
-  function position(anchor) {
-    popup.style.display   = "block";
-    popup.style.transform = "none";
-    const ar = anchor.getBoundingClientRect();
-    const pw = popup.offsetWidth, ph = popup.offsetHeight;
-
-    let left = ar.left + ar.width / 2 - pw / 2;
-    let top  = ar.bottom + 10;
-
-    left = clamp(left, 8, window.innerWidth - pw - 8);
-    if (top + ph > window.innerHeight - 8) top = ar.top - ph - 10;
-
-    popup.style.left = `${left}px`;
-    popup.style.top  = `${top}px`;
-  }
-
-  function show(anchor) {
-    position(anchor);
-    visible = true;
-    CanvasObjects.hidePanel();
-  }
-  function hide()       { popup.style.display = "none"; visible = false; }
-  function toggle(anchor) { visible ? hide() : show(anchor); }
-
-  document.addEventListener("pointerdown", e => {
-    if (visible && !e.target.closest("#helpPopup") && !e.target.closest("#infoBtn")) hide();
-  }, true);
-
-  return { toggle, hide };
-})();
-
 // ─────────────────────────────────────────
 //  READY BANNER  (persists across page state, independent of modals)
 // ─────────────────────────────────────────
