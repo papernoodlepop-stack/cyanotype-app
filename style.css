@@ -226,7 +226,7 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 30px;
+  gap: 40px;
 }
 
 .top-ui * {
@@ -386,7 +386,7 @@ button {
   font-size: 16px;
   background: #333;
   color: #fff;
-  border: none;
+  border: 2px solid rgba(255, 255, 255, 0.853);
   cursor: pointer;
   display: flex;
   align-items: center;
