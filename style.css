@@ -252,7 +252,7 @@ button {
   align-items: center;
   width: min(340px, 88vw);
   margin: 0 auto;
-  margin-bottom: 68px; /* ← add here, after the shorthand, so it isn't overwritten */
+  margin-bottom: 72px; /* ← add here, after the shorthand, so it isn't overwritten */
   padding: 8px 0;
   font-size: 14px;
   background: #222;
@@ -381,6 +381,7 @@ button {
   padding: 4px 2px;
   -webkit-overflow-scrolling: touch;
   margin-top: -12px;
+  margin-bottom: 20px;
 }
 
 .category-btn {
