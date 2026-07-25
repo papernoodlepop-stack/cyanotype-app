@@ -405,10 +405,7 @@ const CanvasObjects = (() => {
   const hidePanel = () => { if (panel) panel.style.display = "none"; };
 
   function positionRotateHandle(o) {
-  const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
-  const handleEl = el?.querySelector(".rotate-handle");
-  if (!handleEl) return;
-
+  ensureRotateHandle();
   const cr = DOM.canvas.getBoundingClientRect();
   const margin = 4;
   const idealTop  = o.y + margin;
@@ -416,9 +413,9 @@ const CanvasObjects = (() => {
   const clampedTop  = clamp(idealTop, margin, cr.height - 24 - margin);
   const clampedLeft = clamp(idealLeft, margin, cr.width  - 24 - margin);
 
-  handleEl.style.position = "fixed";
-  handleEl.style.left = `${cr.left + clampedLeft}px`;
-  handleEl.style.top  = `${cr.top + clampedTop}px`;
+  rotHandle.style.left = `${cr.left + clampedLeft}px`;
+  rotHandle.style.top  = `${cr.top + clampedTop}px`;
+  rotHandle.style.display = "flex";
 }
 
 
@@ -492,40 +489,42 @@ const CanvasObjects = (() => {
     outline.style.cssText = "position:absolute;inset:-3px;border:2px solid #378ADD;border-radius:3px;pointer-events:none;display:none;";
     el.appendChild(outline);
 
-    // Rotate handle — same reliable touch pattern as drag (setPointerCapture + touch-action:none)
-// Rotate handle — same reliable touch pattern as drag (setPointerCapture + touch-action:none)
-const rotHandle = document.createElement("div");
-rotHandle.className = "rotate-handle";
-rotHandle.style.cssText = [
-  "position:absolute",
-  "top:4px", "right:4px",
-  "width:24px", "height:24px",
-  "border-radius:50%",
-  "background:#378ADD",
-  "border:2px solid #fff",
-  "display:none",
-  "cursor:grab",
-  "touch-action:none",
-  "pointer-events:all",
-  "z-index:5",
-].join(";");
-rotHandle.textContent = "↻";
-Object.assign(rotHandle.style, {
-  fontSize: "13px",
-  color: "#fff",
-  display: "none",
-  alignItems: "center",
-  justifyContent: "center",
-});
-el.appendChild(rotHandle);
+let rotHandle = null;
 
-rotHandle.addEventListener("pointerdown", e => {
-  e.preventDefault();
-  e.stopPropagation();
-  rotHandle.setPointerCapture(e.pointerId);
-  startFreeRotateCaptured(o, rotHandle, e);
-});
+function ensureRotateHandle() {
+  if (rotHandle) return;
+  rotHandle = document.createElement("div");
+  rotHandle.className = "rotate-handle";
+  rotHandle.style.cssText = [
+    "position:fixed",
+    "width:24px", "height:24px",
+    "border-radius:50%",
+    "background:#378ADD",
+    "border:2px solid #fff",
+    "display:none",
+    "cursor:grab",
+    "touch-action:none",
+    "pointer-events:all",
+    "z-index:99999",
+    "align-items:center",
+    "justify-content:center",
+    "font-size:13px",
+    "color:#fff",
+  ].join(";");
+  rotHandle.textContent = "↻";
+  document.body.appendChild(rotHandle);
 
+  rotHandle.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    const o = objects.find(o => o.id === selectedId);
+    if (!o) return;
+    rotHandle.setPointerCapture(e.pointerId);
+    startFreeRotateCaptured(o, rotHandle, e);
+  });
+}
+
+const hideRotateHandle = () => { if (rotHandle) rotHandle.style.display = "none"; };
 
     // ── Pointer handling ─────────────────
     let lpTimer = null, didMove = false;
@@ -571,10 +570,9 @@ rotHandle.addEventListener("pointerdown", e => {
     if (!el) return;
     const isSel = o.id === id;
     el.querySelector(".sel-outline").style.display = isSel ? "block" : "none";
-    const rh = el.querySelector(".rotate-handle");
-    if (rh) rh.style.display = isSel ? "flex" : "none";
-    if (isSel) positionRotateHandle(o);
   });
+  const o = objects.find(o => o.id === id);
+  if (o) positionRotateHandle(o);
   updateInteractivity();
   positionPanel();
   hidePicker();
@@ -586,9 +584,8 @@ function deselect() {
     const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
     if (!el) return;
     el.querySelector(".sel-outline").style.display = "none";
-    const rh = el.querySelector(".rotate-handle");
-    if (rh) rh.style.display = "none";
   });
+  hideRotateHandle();
   hidePanel();
   updateInteractivity();
   hidePicker();
