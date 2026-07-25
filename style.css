@@ -184,10 +184,6 @@ body:has(.editor-frame.mode-landscape) #previewCanvas {
   gap: 12px;
 }
 
-.top-ui {
-  margin-bottom: 68px; /* pushes top-ui away from category-strip specifically, without affecting category-strip/canvas gap */
-}
-
 .top-ui,
 .category-strip,
 .canvas-container {
@@ -254,11 +250,10 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  width: min(340px, 88vw); /* same idea as your canvas frame */
-  margin: 0 auto;          /* center it on screen */
-
-  padding: 8px 0;         /* remove side padding so it reaches edges */
+  width: min(340px, 88vw);
+  margin: 0 auto;
+  margin-bottom: 68px; /* ← add here, after the shorthand, so it isn't overwritten */
+  padding: 8px 0;
   font-size: 14px;
   background: #222;
 }
