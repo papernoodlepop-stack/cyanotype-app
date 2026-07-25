@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────
 //  CONFIG
 // ─────────────────────────────────────────
+console.log("SCRIPT LOADED")
 const CONFIG = {
   api:          "",
   syncInterval: 1_000,
