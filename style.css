@@ -56,43 +56,6 @@ img {
 /* ===========================
   EDITOR FRAME
 =========================== */
-.format-picker {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999999;
-}
-
-.format-picker-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  color: #fff;
-}
-
-.format-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  background: #333;
-  border: 2px solid #666;
-  border-radius: 10px;
-  padding: 16px 24px;
-  color: #fff;
-  cursor: pointer;
-}
-
-.format-preview {
-  background: #7a7a7a;
-  border: 2px solid #000;
-}
-.portrait-preview  { width: 50px; height: 70px; }
-.landscape-preview { width: 70px; height: 50px; }
 
 /* Canvas shape driven by explicit class, not orientation media query */
 .editor-frame.mode-portrait .canvas-wrap {
@@ -196,6 +159,7 @@ button {
   touch-action: manipulation;
 }
 
+
 @media (max-height: 500px) {
   html {
     overflow-y: auto !important;
@@ -225,6 +189,7 @@ button {
 =========================== */
 .top-ui {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
   width: min(340px, 88vw);
@@ -233,6 +198,13 @@ button {
   padding: 8px 0;
   font-size: 14px;
   background: #222;
+}
+
+.top-ui-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
 }
 
 .top-ui * {
@@ -345,6 +317,44 @@ button {
   cursor: default;
   pointer-events: none;
 }
+
+.format-picker {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+}
+
+.format-picker-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  color: #fff;
+}
+
+.format-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: #333;
+  border: 2px solid #666;
+  border-radius: 10px;
+  padding: 16px 24px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.format-preview {
+  background: #7a7a7a;
+  border: 2px solid #000;
+}
+.portrait-preview  { width: 50px; height: 70px; }
+.landscape-preview { width: 70px; height: 50px; }
 
 
 .split-btn {
