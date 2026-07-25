@@ -294,28 +294,29 @@ button {
 .top-ui-row:last-child {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   gap: 10px;
   width: 100%;
   flex-wrap: wrap;
-  position: relative;
-  padding: 0 50px;  /* Make room for absolute format buttons */
 }
 
 /* Format toggle on far left */
 .top-ui-row:last-child .button-group:first-of-type {
-  position: absolute;
-  left: 10px;
+  flex-shrink: 0;  /* Don't shrink */
+  margin-right: 20px;  /* Add space between format and other buttons */
 }
 
-/* Other buttons group */
+
+/* Other buttons group - center them */
 .top-ui-buttons {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+  flex-grow: 1;  /* Take available space */
+  justify-content: center;  /* Center the buttons within this group */
 }
 
 .top-ui * {
