@@ -934,7 +934,6 @@ picker.appendChild(header);
 //  FORMAT PICKER
 // ─────────────────────────────────────────
 const FormatPicker = (() => {
-  const el = document.getElementById("formatPicker");
   const frame = document.querySelector(".editor-frame");
   const btnPortrait = document.getElementById("toPortraitBtn");
   const btnLandscape = document.getElementById("toLandscapeBtn");
@@ -945,33 +944,25 @@ const FormatPicker = (() => {
   }
 
   function choose(mode) {
-  frame.classList.remove("mode-portrait", "mode-landscape");
-  frame.classList.add(`mode-${mode}`);
-  el.style.display = "none";
-  localStorage.setItem("canvasFormat", mode);
-  updateToggleUI(mode);
+    frame.classList.remove("mode-portrait", "mode-landscape");
+    frame.classList.add(`mode-${mode}`);
+    localStorage.setItem("canvasFormat", mode);
+    updateToggleUI(mode);
 
-  // Reflow existing objects to match the new canvas shape
-  if (CanvasObjects.hasBoxes()) {
-  Storage.save();
-  waitForLayout(() => CanvasObjects.restore());
- }
-}
-
-  document.getElementById("pickPortrait")?.addEventListener("click", () => choose("portrait"));
-  document.getElementById("pickLandscape")?.addEventListener("click", () => choose("landscape"));
+    if (CanvasObjects.hasBoxes()) {
+      Storage.save();
+      waitForLayout(() => CanvasObjects.restore());
+    }
+  }
 
   btnPortrait?.addEventListener("click", () => choose("portrait"));
   btnLandscape?.addEventListener("click", () => choose("landscape"));
 
+  // Default to portrait unless a previous choice exists in this session
   const saved = localStorage.getItem("canvasFormat");
-  if (saved) {
-    choose(saved);
-  } else {
-    el.style.display = "flex";
-  }
+  choose(saved || "portrait");
 
-  return { el, choose };
+  return { choose };
 })();
 
 const UI = (() => {
@@ -1330,21 +1321,6 @@ const Checkout = (() => {
 // ─────────────────────────────────────────
 //  ACTIONS
 // ─────────────────────────────────────────
-const Actions = {
-  reset() {
-    CanvasObjects.clear(); Thumbs.reset();
-    Storage.clearAll(); UI.closeModals(); State.forceEdit();
-    localStorage.removeItem("canvasFormat");
-    document.querySelector(".editor-frame").classList.remove("mode-portrait", "mode-landscape");
-    document.getElementById("formatPicker").style.display = "flex";
-  },
-  placeThumb(i) {
-    if (State.get("checkoutInProgress")) return;
-    if (!Thumbs.use(i)) return;
-    CanvasObjects.place(i);
-    UI.render();
-  },
-};
 
 const Library = (() => {
   const modal = document.getElementById("libraryModal");
