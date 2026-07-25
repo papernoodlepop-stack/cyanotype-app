@@ -881,11 +881,17 @@ picker.appendChild(header);
 },
 
     clear() {
-      objects = []; nextId = 0; selectedId = null;
-      DOM.canvas.innerHTML = "";
-      hidePanel(); hidePicker();
-      typeSeq.fill(0);
-    },
+  objects = [];
+  nextId = 0;
+  selectedId = null;
+  DOM.canvas.innerHTML = "";
+
+  hidePanel();
+  hidePicker();
+  hideRotateHandle();
+
+  typeSeq.fill(0);
+},
 
     restore(preserveIndex = null) {
       const data = Storage.load(); if (!data) return;
