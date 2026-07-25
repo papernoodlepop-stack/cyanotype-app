@@ -382,6 +382,20 @@ button {
   color: #ffffff;
 }
 
+.help-popup,
+.library-modal {
+    position: fixed;
+}
+
+.help-popup .modal-close-btn,
+.library-modal .modal-close-btn {
+    z-index: 1;
+}
+
+.modal-close-btn {
+    outline: 2px solid red;
+}
+
 .format-toggle {
   display: flex;
   gap: 6px;
