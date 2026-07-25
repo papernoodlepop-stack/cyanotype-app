@@ -145,13 +145,13 @@ img {
   align-items: center;
   justify-content: center;
 }
-.editor-frame.mode-landscape .thumb-bar {
+.editor-frame.mode-landscape .category-strip {
   order: 2;
-  grid-template-columns: repeat(2, 44px);
-  grid-template-rows: repeat(4, 44px);
-  gap: 50px 16px; /* fixed gap instead of space-between */
-  justify-content: center;
-  align-content: start; /* group at top instead of stretching full height */
+  flex-direction: column; /* since landscape row layout needs vertical stacking here too, matching old thumb-bar behavior */
+  height: 360px;
+  width: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .editor-frame.mode-landscape .top-ui {
   order: 3;
