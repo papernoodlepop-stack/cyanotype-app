@@ -112,13 +112,28 @@ img {
 
 .editor-frame.mode-landscape .top-ui-row {
   flex-direction: column;
+  justify-content: flex-start;
   gap: 8px;
 }
 
 .editor-frame.mode-landscape .top-ui button,
-.editor-frame.mode-landscape .info-btn,
-.editor-frame.mode-landscape .split-btn {
+.editor-frame.mode-landscape .info-btn {
   width: 80px;
+  height: 44px;
+  padding: 0;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.editor-frame.mode-landscape .button-group {
+  width: 80px;
+}
+
+.editor-frame.mode-landscape .split-btn {
+  width: 40px; /* half of 80px, since 2 buttons per group */
   height: 44px;
   padding: 0;
   font-size: 13px;
