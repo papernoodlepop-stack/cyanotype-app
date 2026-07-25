@@ -1321,6 +1321,18 @@ const Checkout = (() => {
 // ─────────────────────────────────────────
 //  ACTIONS
 // ─────────────────────────────────────────
+const Actions = {
+  reset() {
+    CanvasObjects.clear(); Thumbs.reset();
+    Storage.clearAll(); UI.closeModals(); State.forceEdit();
+  },
+  placeThumb(i) {
+    if (State.get("checkoutInProgress")) return;
+    if (!Thumbs.use(i)) return;
+    CanvasObjects.place(i);
+    UI.render();
+  },
+};
 
 const Library = (() => {
   const modal = document.getElementById("libraryModal");
