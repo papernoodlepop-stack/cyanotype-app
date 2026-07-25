@@ -705,6 +705,25 @@ pickerRotation =
   picker.style.transformOrigin = "center center";
 }
 
+  function ensurePicker() {
+    if (picker) return;
+    picker = document.createElement("div");
+    picker.id = "layer-picker";
+    picker.style.cssText = [
+      "position:fixed", "display:none", "flex-direction:column",
+      "gap:2px", "padding:6px",
+      "background:#2f3542", "color:#fff", "border:1px solid #555",
+      "border-radius:8px", "z-index:99998", "min-width:150px",
+      "box-shadow:0 4px 14px rgba(0,0,0,0.55)",
+      "transition:transform 0.25s ease", 
+    ].join(";");
+    document.body.appendChild(picker);
+    // Dismiss on outside tap
+    document.addEventListener("pointerdown", ev => {
+      if (!ev.target.closest("#layer-picker")) hidePicker();
+    }, true);
+  }
+
   function showPicker(e) {
     if (touchLocked || activeTouches > 1) return;
     ensurePicker();
@@ -1090,6 +1109,46 @@ const UI = (() => {
   return { render, closeModals, openPreview, openSuccess, openExpired, updatePurchaseButton };
 })();
 
+const HelpPopup = (() => {
+  const popup = document.getElementById("helpPopup");
+  if (!popup) return { toggle(){}, hide(){} };
+
+  document.body.appendChild(popup);
+  popup.style.position = "fixed";
+
+  let visible = false;
+
+  function position(anchor) {
+    popup.style.display   = "block";
+    popup.style.transform = "none";
+    const ar = anchor.getBoundingClientRect();
+    const pw = popup.offsetWidth, ph = popup.offsetHeight;
+
+    let left = ar.left + ar.width / 2 - pw / 2;
+    let top  = ar.bottom + 10;
+
+    left = clamp(left, 8, window.innerWidth - pw - 8);
+    if (top + ph > window.innerHeight - 8) top = ar.top - ph - 10;
+
+    popup.style.left = `${left}px`;
+    popup.style.top  = `${top}px`;
+  }
+
+  function show(anchor) {
+    position(anchor);
+    visible = true;
+    CanvasObjects.hidePanel();
+  }
+  function hide()       { popup.style.display = "none"; visible = false; }
+  function toggle(anchor) { visible ? hide() : show(anchor); }
+
+  document.addEventListener("pointerdown", e => {
+    if (visible && !e.target.closest("#helpPopup") && !e.target.closest("#infoBtn")) hide();
+  }, true);
+
+  return { toggle, hide };
+})();
+
 // ─────────────────────────────────────────
 //  READY BANNER  (persists across page state, independent of modals)
 // ─────────────────────────────────────────
@@ -1328,13 +1387,15 @@ function attachListeners() {
   DOM.expiredOkBtn?.addEventListener("click",       () => UI.closeModals());
   DOM.expiredPurchaseBtn?.addEventListener("click", () => { UI.closeModals(); Checkout.begin(); });
 
-  document.getElementById("infoBtn")?.addEventListener("click", () => {
-    document.getElementById("helpPopup").style.display = "block";
-  });
+  document.getElementById("closeHelpBtn")?.addEventListener("click", () => HelpPopup.hide());
 
-  document.getElementById("closeHelpBtn")?.addEventListener("click", () => {
-    document.getElementById("helpPopup").style.display = "none";
+  if (DOM.infoBtn) {
+  DOM.infoBtn.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    HelpPopup.toggle(DOM.infoBtn);
   });
+}
 }
 
 // ─────────────────────────────────────────
