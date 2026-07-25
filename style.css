@@ -180,7 +180,6 @@ body:has(.editor-frame.mode-landscape) #previewCanvas {
   gap: 12px;
 }
 
-.top-ui,
 .category-strip,
 .canvas-container {
   display: block;
