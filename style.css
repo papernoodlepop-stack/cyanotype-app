@@ -180,7 +180,7 @@ body:has(.editor-frame.mode-landscape) #previewCanvas {
   flex-direction: column;
   align-items: center;
   margin-top: -4px;
-  padding-top: 40px;
+  padding-top: 80px;
   gap: 20px;
 }
 
