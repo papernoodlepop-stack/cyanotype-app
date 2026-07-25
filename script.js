@@ -878,6 +878,7 @@ picker.appendChild(header);
       const cr = DOM.canvas.getBoundingClientRect();
       DOM.canvas.innerHTML = ""; objects = [];
       selectedId = null;
+      typeSeq.fill(0); // ← add this, resets sequence counters before rebuilding
 
       hidePanel();
       hidePicker();
@@ -904,10 +905,9 @@ picker.appendChild(header);
       Thumbs.setCounts(data.thumbCounts);
       updateInteractivity();
 
-      // Reselect if requested and the object still exists in the restored layout
       if (preserveIndex !== null && preserveIndex >= 0 && objects[preserveIndex]) {
-  selectObj(objects[preserveIndex].id);
-}
+        selectObj(objects[preserveIndex].id);
+      }
 },
       deselect, hidePanel,
   };
