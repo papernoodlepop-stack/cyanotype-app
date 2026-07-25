@@ -1387,17 +1387,13 @@ function attachListeners() {
   DOM.expiredOkBtn?.addEventListener("click",       () => UI.closeModals());
   DOM.expiredPurchaseBtn?.addEventListener("click", () => { UI.closeModals(); Checkout.begin(); });
 
-document.getElementById("closeHelpBtn")?.addEventListener("click", () => {
-  document.getElementById("helpPopup").style.display = "none";
-});
-
-  if (DOM.infoBtn) {
-  DOM.infoBtn.addEventListener("pointerdown", e => {
-    e.preventDefault();
-    e.stopPropagation();
-    HelpPopup.toggle(DOM.infoBtn);
+  document.getElementById("infoBtn")?.addEventListener("click", () => {
+    document.getElementById("helpPopup").style.display = "block";
   });
-}
+
+  document.getElementById("closeHelpBtn")?.addEventListener("click", () => {
+    document.getElementById("helpPopup").style.display = "none";
+  });
 }
 
 // ─────────────────────────────────────────
