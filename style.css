@@ -495,12 +495,6 @@ button {
   z-index: 100000;
 }
 
-.library-modal.active {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
 .library-content {
   width: min(360px, 90vw);
   max-height: 80dvh;
