@@ -16,55 +16,47 @@
 <div class="top-ui">
 
   <div class="top-ui-row">
-    <!-- Start Over ONLY affects canvas + thumbnail sync -->
     <button type="button" id="startOverBtn" class="info-btn" title="StartOver">StartOver</button>
-
     <button id="infoBtn" class="info-btn">ReadFirst</button>
 
     <div id="helpPopup" class="help-popup">
       <div class="help-title">How to Use</div>
-
       <div class="help-section">
         <div class="help-bold">For landscape format</div>
         Choose your format (Portrait or Landscape) at the start. This can't be changed once you begin your design.
       </div>
-
       <div class="help-section">
         <div class="help-bold">Place objects</div>
         Tap a thumbnail to add it to the canvas.
       </div>
-
       <div class="help-section">
         <div class="help-bold">Rotate</div>
         Drag the rotation button on your selected object's control panel.
       </div>
-
       <div class="help-section">
         <div class="help-bold">Remove</div>
         Click X button on your selected object's control panel.
       </div>
-
       <div class="help-section">
         <div class="help-bold">Close ⓘ</div>
         Tap ReadFirst again or tap outside the panel.
       </div>
     </div>
 
-    <!-- Opens preview modal (read-only snapshot) -->
     <button type="button" id="previewBtn" class="info-btn" title="Preview">Preview</button>
   </div>
-  
-    <div class="button-group">
-      <button id="toLandscapeBtn" class="split-btn right" title="Landscape">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-    <path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/>
-  </svg>
-</button>
 
+  <div class="top-ui-row">
+    <div class="button-group">
+      <button id="toPortraitBtn" class="split-btn left" title="Portrait">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 3v18M8 7l4-4 4 4M8 17l4 4 4-4"/>
+        </svg>
+      </button>
       <button id="toLandscapeBtn" class="split-btn right" title="Landscape">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-         <path d="M12 3v18M8 7l4-4 4 4M8 17l4 4 4-4"/>
-       </svg>
+          <path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/>
+        </svg>
       </button>
     </div>
 
