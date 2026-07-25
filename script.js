@@ -1387,7 +1387,7 @@ function attachListeners() {
   DOM.expiredOkBtn?.addEventListener("click",       () => UI.closeModals());
   DOM.expiredPurchaseBtn?.addEventListener("click", () => { UI.closeModals(); Checkout.begin(); });
 
-  const closeHelpBtn = document.getElementById("closeHelpBtn");
+const closeHelpBtn = document.getElementById("closeHelpBtn");
 console.log("closeHelpBtn found:", closeHelpBtn);
 closeHelpBtn?.addEventListener("click", () => { console.log("close clicked"); HelpPopup.hide(); });
 
