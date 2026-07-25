@@ -82,19 +82,6 @@ img {
   flex-direction: column;
 }
 
-.editor-frame.mode-landscape .top-ui button,
-.editor-frame.mode-landscape .info-btn,
-.editor-frame.mode-landscape .format-toggle-btn {
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-}
-
 .editor-frame.mode-landscape .canvas-container,
 .editor-frame.mode-landscape .category-strip,
 .editor-frame.mode-landscape .top-ui {
@@ -122,6 +109,25 @@ img {
   height: 360px;        /* match canvas-wrap's max-height */
   justify-content: space-between; /* or space-around, center, etc — distributes buttons along that height */
 }
+
+.editor-frame.mode-landscape .top-ui-row {
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editor-frame.mode-landscape .top-ui button,
+.editor-frame.mode-landscape .info-btn,
+.editor-frame.mode-landscape .format-toggle-btn {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
 
 .editor-frame.mode-landscape .canvas-wrap {
   width: 504px;
