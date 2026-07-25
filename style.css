@@ -484,30 +484,25 @@ button {
 .library-modal {
   position: fixed;
   width: 260px;
-  max-height: 80vh; /* cap so it doesn't grow beyond viewport, but can grow up to this */
+  max-height: 80vh;
   background: rgba(20, 20, 20, 0.92);
   color: white;
-  padding: 14px 16px; /* padding all around, already here */
+  padding: 16px;
   border-radius: 12px;
   border: 1px solid rgba(255,255,255,0.15);
   font-size: 13px;
   line-height: 1.45;
   display: none;
   z-index: 100000;
-  overflow-y: auto; /* if content exceeds max-height, scroll instead of clipping */
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .library-content {
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-.library-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #fff;
+  width: 100%;
 }
 
 .library-grid {
@@ -515,7 +510,14 @@ button {
   grid-template-columns: repeat(4, 60px);
   gap: 15px;
   justify-content: center;
-  /* removed: overflow-y: auto — outer .library-modal handles this now */
+  width: 100%;
+}
+
+.library-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
 }
 
 .thumb {
