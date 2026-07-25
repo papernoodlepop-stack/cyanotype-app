@@ -399,8 +399,8 @@ const CanvasObjects = (() => {
     panel.style.visibility = "";
 
     panel.style.left = `${clamp(cx - pw / 2, 8, window.innerWidth  - pw - 8)}px`;
-    panel.style.top  = `${Math.max(8, cy - ph - 12)}px`;
-  }
+    panel.style.top  = `${Math.max(8, cy - ph - 40)}px`; // increased offset from -12 to -40, more clearance from handle
+}
 
   const hidePanel = () => { if (panel) panel.style.display = "none"; };
 
@@ -607,8 +607,11 @@ function deselect() {
       if (blockedByTouchLock()) return;
       if (!moved) { moved = true; if (onFirstMove) onFirstMove(); }
       const r = DOM.canvas.getBoundingClientRect();
-      o.x = clamp(ev.clientX - r.left - ox, -(o.w - VISIBLE), r.width  - VISIBLE);
-      o.y = clamp(ev.clientY - r.top  - oy, -(o.h - VISIBLE), r.height - VISIBLE);
+      const visibleX = Math.min(80, o.w * 0.3); // at least 30% of width or 80px, whichever is smaller
+      const visibleY = Math.min(80, o.h * 0.3);
+
+      o.x = clamp(ev.clientX - r.left - ox, -(o.w - visibleX), r.width  - visibleX);
+      o.y = clamp(ev.clientY - r.top  - oy, -(o.h - visibleY), r.height - visibleY);
       if (el) { el.style.left = `${o.x}px`; el.style.top = `${o.y}px`; }
       if (o.id === selectedId) positionRotateHandle(o);
     }
