@@ -142,6 +142,8 @@ const DOM = {
   slotCaptionText:    document.getElementById("slotCaptionText"),
   countdownDisplay:   document.getElementById("countdownDisplay"),
   infoBtn:            document.getElementById("infoBtn"),
+  undoBtn:            document.getElementById("undoBtn"),
+  redoBtn:            document.getElementById("redoBtn"),
   thumbs:             document.querySelectorAll(".thumb"),
 };
 
@@ -244,11 +246,25 @@ const Storage = (() => {
     resEndsAt: "reservationEndsAt",
   };
 
-  const save = () =>
-    localStorage.setItem(K.design, JSON.stringify({
+  let undoStack = [];
+  let redoStack = [];
+  const MAX_HISTORY = 30;
+  let restoring = false; // guard so undo/redo itself doesn't push new history
+
+  const save = () => {
+    const snapshot = JSON.stringify({
       layout:      CanvasObjects.getLayout(),
       thumbCounts: Thumbs.getCounts(),
-    }));
+    });
+
+    if (!restoring) {
+      undoStack.push(snapshot);
+      if (undoStack.length > MAX_HISTORY) undoStack.shift();
+      redoStack = [];
+    }
+
+    localStorage.setItem(K.design, snapshot);
+  };
 
   function load() {
     const raw = localStorage.getItem(K.design);
@@ -257,7 +273,7 @@ const Storage = (() => {
     catch { localStorage.removeItem(K.design); return null; }
   }
 
-  const clearAll         = () => Object.values(K).forEach(k => localStorage.removeItem(k));
+  const clearAll         = () => { Object.values(K).forEach(k => localStorage.removeItem(k)); undoStack = []; redoStack = []; };
   const clearReservation = () => { localStorage.removeItem(K.resId); localStorage.removeItem(K.resEndsAt); };
 
   function saveReservation(id, endsAt) {
@@ -272,7 +288,31 @@ const Storage = (() => {
     };
   }
 
-  return { save, load, clearAll, clearReservation, saveReservation, loadReservation };
+  function undo() {
+    if (undoStack.length < 2) return; // need at least current + previous state
+    const current = undoStack.pop();
+    redoStack.push(current);
+    const prev = undoStack[undoStack.length - 1];
+    restoring = true;
+    localStorage.setItem(K.design, prev);
+    CanvasObjects.restore();
+    restoring = false;
+  }
+
+  function redo() {
+    if (redoStack.length === 0) return;
+    const next = redoStack.pop();
+    undoStack.push(next);
+    restoring = true;
+    localStorage.setItem(K.design, next);
+    CanvasObjects.restore();
+    restoring = false;
+  }
+
+  function canUndo() { return undoStack.length >= 2; }
+  function canRedo() { return redoStack.length > 0; }
+
+  return { save, load, clearAll, clearReservation, saveReservation, loadReservation, undo, redo, canUndo, canRedo };
 })();
 
 // ─────────────────────────────────────────
@@ -925,6 +965,8 @@ const UI = (() => {
 
     setBtn(DOM.purchaseBtn, !boxes || blocked);
     setBtn(DOM.previewBtn,  !boxes);
+    setBtn(DOM.undoBtn, !Storage.canUndo());
+    setBtn(DOM.redoBtn, !Storage.canRedo());
     DOM.purchaseBtn?.classList.toggle("locked", blocked);
     Thumbs.render();
 
@@ -1294,6 +1336,8 @@ setInterval(() => {
 //  LISTENERS
 // ─────────────────────────────────────────
 function attachListeners() {
+  DOM.undoBtn?.addEventListener("click", () => { Storage.undo(); UI.render(); });
+  DOM.redoBtn?.addEventListener("click", () => { Storage.redo(); UI.render(); });
   DOM.previewBtn?.addEventListener("click",         () => UI.openPreview());
   DOM.purchaseBtn?.addEventListener("click",        () => Checkout.begin());
   DOM.resetBtn?.addEventListener("click",           () => Actions.reset());
