@@ -513,6 +513,13 @@ button {
   stroke-width: 2.5;
 }
 
+#previewBtn:disabled,
+#previewBtn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 /* ===========================
   THUMB GRID
 =========================== */
