@@ -56,49 +56,56 @@ img {
 /* ===========================
 TOP UI - PORTRAIT
 =========================== */
-
 .editor-frame.mode-portrait .top-ui {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
+  max-width: 360px;
   margin: 0 auto 20px;
   padding: 12px 0 8px;
-  gap: 16px;
+  gap: 10px;
 }
 
-.editor-frame.mode-portrait .top-ui-row:first-child {
+/* the single row: format toggles | start over | undo/redo group | preview */
+.editor-frame.mode-portrait .top-controls {
   display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-.editor-frame.mode-portrait .top-ui-row:last-child {
-  display: flex;
-  justify-content: center;
   align-items: center;
   width: 100%;
-  gap: 8px;
+  gap: 0;
   flex-wrap: nowrap;
 }
 
-.editor-frame.mode-portrait .top-ui-row:last-child button {
-  width: 80px;
+/* every direct child (both buttons AND the button-group wrapper) shares width equally */
+.editor-frame.mode-portrait .top-controls > * {
+  flex: 1 1 0;
+  width: auto;
   height: 40px;
-  flex: 0 0 80px;
+  box-sizing: border-box;
+  border-radius: 0;
+}
+
+/* button-group itself needs to lay its two children out side by side, splitting its own share */
+.editor-frame.mode-portrait .top-controls .button-group {
+  display: flex;
+}
+.editor-frame.mode-portrait .top-controls .button-group > button {
+  flex: 1 1 0;
+  height: 40px;
   box-sizing: border-box;
 }
 
-.top-ui-buttons {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  gap: 8px;
+/* rounded end caps only on the true first/last visible buttons */
+.editor-frame.mode-portrait .top-controls > *:first-child {
+  border-radius: 8px 0 0 8px;
+}
+.editor-frame.mode-portrait .top-controls > *:last-child {
+  border-radius: 0 8px 8px 0;
 }
 
-.top-ui-buttons > * {
-  flex-shrink: 0;
+/* visual (not physical) divider before the undo/redo group */
+.editor-frame.mode-portrait .top-controls .button-group {
+  border-left: 1px solid rgba(255,255,255,0.3);
 }
 
 /* Prevent buttons shrinking */
