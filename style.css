@@ -284,40 +284,40 @@ button {
   display: flex;
 }
 
-/* Row 1 (ReadFirst) — full width, own line, on top */
-.row-readfirst {
+/* Row 1 (ReadFirst) — full width, own line, on top — PORTRAIT ONLY */
+.editor-frame.mode-portrait .row-readfirst {
   width: 100%;
   justify-content: center;
   order: 1;
 }
 
-.row-readfirst .info-btn {
+.editor-frame.mode-portrait .row-readfirst .info-btn {
   width: 100%;
   height: 40px;
   border-radius: 10px;
   box-sizing: border-box;
 }
 
-/* Bottom row order: format, startover, undo/redo, preview */
-.row-format    { order: 2; flex: 1 1 0; min-width: 0; }
-.row-startover { order: 3; flex: 1 1 0; min-width: 0; }
-.row-undoredo  { order: 4; flex: 1 1 0; min-width: 0; }
-.row-preview   { order: 5; flex: 1 1 0; min-width: 0; }
+/* Bottom row order: format, startover, undo/redo, preview — PORTRAIT ONLY */
+.editor-frame.mode-portrait .row-format    { order: 2; flex: 1 1 0; min-width: 0; }
+.editor-frame.mode-portrait .row-startover { order: 3; flex: 1 1 0; min-width: 0; }
+.editor-frame.mode-portrait .row-undoredo  { order: 4; flex: 1 1 0; min-width: 0; }
+.editor-frame.mode-portrait .row-preview   { order: 5; flex: 1 1 0; min-width: 0; }
 
-/* Uniform button shape across the whole bottom row */
-.row-startover .info-btn,
-.row-preview .info-btn,
-.row-format .button-group,
-.row-undoredo .button-group {
+/* Uniform button shape across the whole bottom row — PORTRAIT ONLY */
+.editor-frame.mode-portrait .row-startover .info-btn,
+.editor-frame.mode-portrait .row-preview .info-btn,
+.editor-frame.mode-portrait .row-format .button-group,
+.editor-frame.mode-portrait .row-undoredo .button-group {
   width: 100%;
   height: 40px;
   border-radius: 10px;
   box-sizing: border-box;
 }
 
-/* Make split buttons inside format/undo-redo groups fill their group evenly */
-.row-format .split-btn,
-.row-undoredo .split-btn {
+/* Make split buttons inside format/undo-redo groups fill their group evenly — PORTRAIT ONLY */
+.editor-frame.mode-portrait .row-format .split-btn,
+.editor-frame.mode-portrait .row-undoredo .split-btn {
   flex: 1;
   height: 100%;
 }
