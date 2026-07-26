@@ -54,45 +54,44 @@ img {
 }
 
 /* ===========================
-  TOP UI - BASE (PORTRAIT)
+TOP UI - PORTRAIT
 =========================== */
-/* PORTRAIT MODE - Explicit selectors */
+
 .editor-frame.mode-portrait .top-ui {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
   margin: 0 auto 20px;
-  padding: 12px 0 8px 0;
+  padding: 12px 0 8px;
   gap: 16px;
 }
 
-/* READ FIRST row */
 .editor-frame.mode-portrait .top-ui-row:first-child {
   display: flex;
   justify-content: center;
-  align-items: center;
   width: 100%;
 }
 
 .editor-frame.mode-portrait .top-ui-row:last-child {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: nowrap;
 }
 
-.editor-frame.mode-portrait .top-ui-buttons {
+.top-ui-buttons {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
-  flex-wrap: nowrap;
-  width: auto;
+  width: 100%;
+  gap: 8px;
+}
+
+.top-ui-buttons > * {
+  flex-shrink: 0;
 }
 
 /* Prevent buttons shrinking */
@@ -112,23 +111,28 @@ img {
 
 .button-group {
   display: flex;
+  width: 90px;
+  height: 36px;
+
   border-radius: 10px;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.853); /* matches .info-btn's border style, wraps whole group */
+  border: 2px solid rgba(255,255,255,0.853);
 }
 
 .split-btn {
-  width: 36px;
+  flex: 1;
   height: 36px;
   padding: 0;
-  font-size: 16px;
+
   background: #333;
   color: #fff;
-  border: none; /* no individual border — outline comes from button-group instead */
-  cursor: pointer;
+  border: none;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  cursor: pointer;
 }
 
 .split-btn.left {
@@ -136,16 +140,19 @@ img {
 }
 
 .info-btn {
-  width: auto;
-  height: 36px;  /* slightly taller for better touch target */
-  padding: 0 14px;
+  width: 90px;
+  height: 36px;
+  padding: 0;
+
   border-radius: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
+
   background: rgba(255,255,255,0.10);
-  border: 2px solid rgba(255, 255, 255, 0.853);
+  border: 2px solid rgba(255,255,255,0.853);
   color: #fff;
+
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -290,14 +297,18 @@ img {
   THUMB GRID
 =========================== */
 .category-strip {
-  display: flex;
-
   width: 100%;
-  max-width: 360px;   /* same as canvas */
+  max-width: 360px;
+
+  display: flex;
+  gap: 8px;
+
   overflow-x: auto;
 
-  gap: 8px;
   padding: 4px 2px;
+  margin-top: -12px;
+  margin-bottom: 20px;
+
   box-sizing: border-box;
 
   -webkit-overflow-scrolling: touch;
@@ -310,14 +321,16 @@ img {
 
 .category-btn {
   flex-shrink: 0;
+
   padding: 8px 14px;
   border-radius: 10px;
+
   background: #333;
   color: #fff;
   border: 1px solid #666;
+
   white-space: nowrap;
   cursor: pointer;
-  touch-action: pan-x;
 }
 
 .category-btn.active {
@@ -385,21 +398,30 @@ img {
   CANVAS
 =========================== */
 .canvas-container {
+  width: 100%;
   display: flex;
-  margin-top: -2px;
   justify-content: center;
 }
 
 .canvas-wrap {
   width: 100%;
-  max-width: 360px;
-  margin: 0 auto;
+  max-width: none;
+
   aspect-ratio: 5 / 7;
+
   position: relative;
   overflow: hidden;
+
   background: #7a7a7a;
   border: 2px solid #000;
+
   touch-action: none;
+}
+
+.editor-frame {
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
 }
 
 .canvas-wrap.previewing {
