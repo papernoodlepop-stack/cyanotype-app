@@ -1134,7 +1134,10 @@ const HelpPopup = (() => {
     let top  = ar.bottom + 10;
 
     left = clamp(left, 8, window.innerWidth - pw - 8);
-    if (top + ph > window.innerHeight - 8) top = ar.top - ph - 10;
+    if (top + ph > window.innerHeight - 8) {top = ar.top - ph - 10;
+    }
+
+    top = clamp(top, 8, window.innerHeight - ph - 8);
 
     popup.style.left = `${left}px`;
     popup.style.top  = `${top}px`;
