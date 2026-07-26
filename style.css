@@ -268,23 +268,58 @@ button {
 =========================== */
 .top-ui {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
+  flex-wrap: wrap;
+  align-items: stretch;
   width: min(360px, 88vw);
+  max-width: 360px;
   margin: 0 auto;
   margin-bottom: 20px;
   padding: 8px 0;
   font-size: 14px;
   background: #222;
-  gap: 30px;
+  gap: 8px;
 }
 
 .top-ui-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 40px;
+}
+
+/* Row 1 (ReadFirst) — full width, own line, on top */
+.row-readfirst {
+  width: 100%;
+  justify-content: center;
+  order: 1;
+}
+
+.row-readfirst .info-btn {
+  width: 100%;
+  height: 40px;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+/* Bottom row order: format, startover, undo/redo, preview */
+.row-format    { order: 2; flex: 1 1 0; min-width: 0; }
+.row-startover { order: 3; flex: 1 1 0; min-width: 0; }
+.row-undoredo  { order: 4; flex: 1 1 0; min-width: 0; }
+.row-preview   { order: 5; flex: 1 1 0; min-width: 0; }
+
+/* Uniform button shape across the whole bottom row */
+.row-startover .info-btn,
+.row-preview .info-btn,
+.row-format .button-group,
+.row-undoredo .button-group {
+  width: 100%;
+  height: 40px;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+/* Make split buttons inside format/undo-redo groups fill their group evenly */
+.row-format .split-btn,
+.row-undoredo .split-btn {
+  flex: 1;
+  height: 100%;
 }
 
 .top-ui * {
@@ -306,7 +341,7 @@ button {
   display: flex;
   border-radius: 10px;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.853); /* matches .info-btn's border style, wraps whole group */
+  border: 2px solid rgba(255, 255, 255, 0.853);
 }
 
 .split-btn {
@@ -316,7 +351,7 @@ button {
   font-size: 16px;
   background: #333;
   color: #fff;
-  border: none; /* no individual border — outline comes from button-group instead */
+  border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -324,7 +359,7 @@ button {
 }
 
 .split-btn.left {
-  border-right: 1px solid rgba(255, 255, 255, 0.3); /* thin divider between the two halves, more subtle than the outer border */
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .info-btn {
