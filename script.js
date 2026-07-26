@@ -1141,6 +1141,7 @@ const HelpPopup = (() => {
   }
 
   function show(anchor) {
+    console.log("anchor rect:", anchor.getBoundingClientRect());
     position(anchor);
     visible = true;
     CanvasObjects.hidePanel();
