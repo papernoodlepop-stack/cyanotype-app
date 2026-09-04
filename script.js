@@ -1381,16 +1381,20 @@ const Actions = {
     CanvasObjects.clear(); Thumbs.reset();
     Storage.clearAll();       // wipes design + reservation
     if (State.productionActive) {
-      // Restore the reservation pointer we just wiped — an active
-      // print job still belongs to this browser even after Start Over.
       Storage.saveReservation(State.get("reservationId"), State.get("productionEndsAt"));
     }
     UI.closeModals();
     if (State.productionActive) {
-      State.set({ mode: "production" }); // keep tracking, don't forceEdit
+      State.set({ mode: "production" });
     } else {
       State.forceEdit();
     }
+  },
+  placeThumb(i) {
+    if (State.get("checkoutInProgress")) return;
+    if (!Thumbs.use(i)) return;
+    CanvasObjects.place(i);
+    UI.render();
   },
 };
 
