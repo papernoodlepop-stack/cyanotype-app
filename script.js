@@ -1379,13 +1379,18 @@ const Checkout = (() => {
 const Actions = {
   reset() {
     CanvasObjects.clear(); Thumbs.reset();
-    Storage.clearAll(); UI.closeModals(); State.forceEdit();
-  },
-  placeThumb(i) {
-    if (State.get("checkoutInProgress")) return;
-    if (!Thumbs.use(i)) return;
-    CanvasObjects.place(i);
-    UI.render();
+    Storage.clearAll();       // wipes design + reservation
+    if (State.productionActive) {
+      // Restore the reservation pointer we just wiped — an active
+      // print job still belongs to this browser even after Start Over.
+      Storage.saveReservation(State.get("reservationId"), State.get("productionEndsAt"));
+    }
+    UI.closeModals();
+    if (State.productionActive) {
+      State.set({ mode: "production" }); // keep tracking, don't forceEdit
+    } else {
+      State.forceEdit();
+    }
   },
 };
 
@@ -1490,11 +1495,9 @@ document.addEventListener("DOMContentLoaded", () => {
     await Sync.poll();
     Checkout.handleStripeReturn();
 
-    // If they're paid and still in production (e.g. they closed the tab
-    // and came back), reopen the success modal so status is visible again.
-    if (State.get("productionEndsAt") && !DOM.successModal?.classList.contains("active")) {
-      UI.openSuccess();
-    }
+    if (State.get("statusForMe") === "production" && !DOM.successModal?.classList.contains("active")) {
+  UI.openSuccess();
+}
 
     State.set({ bootComplete: true });
     Sync.start();
