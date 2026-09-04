@@ -159,6 +159,7 @@ const State = (() => {
     productionEndsAt:   null,
     checkoutInProgress: false,
     bootComplete:       false,
+    statusForMe:        null,
   };
 
   return {
@@ -1160,14 +1161,17 @@ const HelpPopup = (() => {
 })();
 
 // ─────────────────────────────────────────
-//  READY BANNER  (persists across page state, independent of modals)
+//  STATUS BAR  (single source of truth: edit page banner + preview caption)
 // ─────────────────────────────────────────
-const ReadyBanner = (() => {
-  const banner = document.getElementById("readyBanner");
-  const dismissBtn = document.getElementById("dismissBannerBtn");
-  if (!banner) return { show(){}, hide(){} };
+const StatusBar = (() => {
+  const bar        = document.getElementById("statusBar");
+  const text        = document.getElementById("statusBarText");
+  const dismissBtn  = document.getElementById("statusBarDismissBtn");
+  if (!bar) return { update(){}, };
 
-  let audioCtx = null;
+  let dismissed = false;
+  let audioCtx  = null;
+  let lastStatus = null;
 
   function playDing() {
     try {
@@ -1176,32 +1180,62 @@ const ReadyBanner = (() => {
       const osc  = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = "sine";
-      osc.frequency.value = 880; // a clean, simple "ding" pitch
+      osc.frequency.value = 880;
       gain.gain.setValueAtTime(0.001, now);
       gain.gain.exponentialRampToValueAtTime(0.35, now + 0.02);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start(now);
-      osc.stop(now + 0.6);
-    } catch (err) {
-      console.error("[ready banner] ding failed:", err);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.6);
+    } catch {}
+  }
+
+  function computeText() {
+    const status = State.get("statusForMe"); // "production" | "done" | null
+    const end    = State.get("productionEndsAt");
+
+    if (status === "done") return { msg: "Your design is ready — come pick it up!", color: "#00c853", textColor: "#000", showDismiss: true };
+
+    if (status === "production" && end) {
+      const d = Math.max(0, Math.ceil((end - Date.now()) / 1000));
+      if (d > 0) {
+        const m = Math.floor(d / 60), s = d % 60;
+        return { msg: `Your design is printing — ${m}:${String(s).padStart(2,"0")}`, color: "#378ADD", textColor: "#fff", showDismiss: false };
+      }
+      return { msg: "Almost ready…", color: "#378ADD", textColor: "#fff", showDismiss: false };
     }
+    return null;
   }
 
-  function show() {
-    if (banner.style.display === "flex") return; // already showing, don't re-ding
-    banner.style.display = "flex";
-    playDing();
+  function update() {
+    const info = computeText();
+
+    // Ding once, the moment status flips to "done"
+    const status = State.get("statusForMe");
+    if (status === "done" && lastStatus !== "done") playDing();
+    lastStatus = status;
+
+    if (!info || dismissed) {
+      bar.style.display = "none";
+      if (DOM.slotCaptionText) DOM.slotCaptionText.textContent = "";
+      return;
+    }
+
+    bar.style.display          = "flex";
+    bar.style.background       = info.color;
+    bar.style.color            = info.textColor;
+    text.textContent           = info.msg;
+    dismissBtn.style.display   = info.showDismiss ? "inline-block" : "none";
+
+    // Mirror into the preview modal's caption so they always agree
+    if (DOM.slotCaptionText) DOM.slotCaptionText.textContent = info.msg;
   }
 
-  function hide() {
-    banner.style.display = "none";
-  }
+  dismissBtn?.addEventListener("click", () => { dismissed = true; update(); });
 
-  dismissBtn?.addEventListener("click", hide);
+  // Reset dismissal whenever a NEW production run starts for this user
+  function resetDismissal() { dismissed = false; }
 
-  return { show, hide };
+  return { update, resetDismissal };
 })();
 
 // ─────────────────────────────────────────
@@ -1221,21 +1255,32 @@ const Sync = (() => {
       fails = 0;
       const d = await res.json();
 
-      if (d.status === "done") {        
-        ReadyBanner.show();
+            if (d.status === "done") {
+        const { id: myReservationId } = Storage.loadReservation();
+        const isMine = myReservationId && d.reservationId === myReservationId;
+        if (isMine) {
+          if (State.get("statusForMe") !== "done") StatusBar.resetDismissal();
+          State.set({ statusForMe: "done" });
+        }
         return;
       }
 
       if (!d.valid || d.status === "edit") {
-        State.set({ reservationId:null, reservationEndsAt:null, productionEndsAt:null });
+        State.set({ reservationId:null, reservationEndsAt:null, productionEndsAt:null, statusForMe:null });
         State.setMode("edit"); return;
       }
       if (d.status === "reserved") {
-        State.set({ reservationId:d.reservationId||null, reservationEndsAt:d.endsAt||null, productionEndsAt:null });
+        State.set({ reservationId:d.reservationId||null, reservationEndsAt:d.endsAt||null, productionEndsAt:null, statusForMe:null });
         return;
       }
       if (d.status === "production") {
-        State.set({ productionEndsAt:d.productionEndsAt||null, reservationEndsAt:null });
+        const { id: myReservationId } = Storage.loadReservation();
+        const isMine = myReservationId && d.reservationId === myReservationId;
+        State.set({
+          productionEndsAt: d.productionEndsAt || null,
+          reservationEndsAt: null,
+          statusForMe: isMine ? "production" : null,
+        });
         State.setMode("production");
         if (DOM.successModal?.classList.contains("active") && d.productionEndsAt) {
           const s = Math.max(0, Math.ceil((d.productionEndsAt - Date.now()) / 1000));
@@ -1453,7 +1498,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     State.set({ bootComplete: true });
     Sync.start();
-    setInterval(() => UI.updatePurchaseButton(), 1000);
+    setInterval(() => { UI.updatePurchaseButton(); StatusBar.update(); }, 1000);
   });
 });
 
