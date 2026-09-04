@@ -1444,6 +1444,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     await Sync.poll();
     Checkout.handleStripeReturn();
+
+    // If they're paid and still in production (e.g. they closed the tab
+    // and came back), reopen the success modal so status is visible again.
+    if (State.get("productionEndsAt") && !DOM.successModal?.classList.contains("active")) {
+      UI.openSuccess();
+    }
+
     State.set({ bootComplete: true });
     Sync.start();
     setInterval(() => UI.updatePurchaseButton(), 1000);
@@ -1460,4 +1467,14 @@ window.addEventListener("pageshow", e => {
   if (new URL(window.location.href).searchParams.has("session_id")) return;
   const { id } = Storage.loadReservation();
   if (id) Checkout.releaseOnAbandon();
+});
+
+// Warn before leaving the tab while a reservation is active or an order
+// is in production — browsers show their own generic message, but this
+// at least stops accidental closes/navigations.
+window.addEventListener("beforeunload", (e) => {
+  if (State.checkoutBlocked) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
 });
