@@ -33,10 +33,6 @@ const CONFIG = {
 
   thumbScale: [2.8, 2.7, 1.2, 3.2, 2.4, 3.3, 1.2, 2.3],
 
-  // How translucent each material is in preview, 0–1. 1 = fully opaque
-  // (e.g. cardstock), lower = more see-through (e.g. thin tissue paper).
-  // Same order/index as thumbImages. Tune per real material once you've
-  // got physical samples to check against.
   thumbOpacity: [0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6],
 };
 
@@ -45,11 +41,10 @@ const THUMB_NAMES = [
   "Spiral",   "Grass",       "Bubble", "Fuchsia",
 ];
 
-// Admin mode: add ?admin=1 to URL to see overlap dimming in preview
 const ADMIN_MODE = new URLSearchParams(window.location.search).get("admin") === "1";
 
 // ─────────────────────────────────────────
-//  UTILS  (declared first — used everywhere)
+//  UTILS
 // ─────────────────────────────────────────
 let touchLocked = false;
 let activeTouches = 0;
@@ -60,21 +55,15 @@ function blockedByTouchLock() {
 
 document.addEventListener("touchstart", (e) => {
   activeTouches = e.touches.length;
-
   if (activeTouches >= 2) {
     touchLocked = true;
-
-    // cancel current selections/editing immediately
     CanvasObjects.deselect();
-
-    // prevent browser gestures
     e.preventDefault();
   }
 }, { passive: false });
 
 document.addEventListener("touchmove", (e) => {
   activeTouches = e.touches.length;
-
   if (activeTouches >= 2 || touchLocked) {
     e.preventDefault();
     e.stopPropagation();
@@ -84,10 +73,7 @@ document.addEventListener("touchmove", (e) => {
 
 document.addEventListener("touchend", (e) => {
   activeTouches = e.touches.length;
-
-  if (activeTouches === 0) {
-    touchLocked = false;
-  }
+  if (activeTouches === 0) touchLocked = false;
 }, { passive: false });
 
 function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
@@ -195,7 +181,6 @@ const State = (() => {
 const Thumbs = (() => {
   let counts = [...CONFIG.thumbLimits];
 
-  // Renders thumbs for a specific category into a given container (the modal grid)
   function renderInto(container, category) {
     container.innerHTML = "";
     CONFIG.thumbImages.forEach((src, i) => {
@@ -263,7 +248,7 @@ const Storage = (() => {
   let undoStack = [];
   let redoStack = [];
   const MAX_HISTORY = 10;
-  let restoring = false; // guard so undo/redo itself doesn't push new history
+  let restoring = false;
 
   const save = () => {
     const snapshot = JSON.stringify({
@@ -304,7 +289,7 @@ const Storage = (() => {
 
   function undo() {
     if (undoStack.length < 2) return;
-    const selectedIndex = CanvasObjects.getSelectedIndex(); // ← fixed
+    const selectedIndex = CanvasObjects.getSelectedIndex();
     const current = undoStack.pop();
     redoStack.push(current);
     const prev = undoStack[undoStack.length - 1];
@@ -312,7 +297,7 @@ const Storage = (() => {
     localStorage.setItem(K.design, prev);
     CanvasObjects.restore(selectedIndex);
     restoring = false;
-}
+  }
 
   function redo() {
     if (redoStack.length === 0) return;
@@ -323,7 +308,7 @@ const Storage = (() => {
     localStorage.setItem(K.design, next);
     CanvasObjects.restore(selectedIndex);
     restoring = false;
-}
+  }
 
   function canUndo() { return undoStack.length >= 2; }
   function canRedo() { return redoStack.length > 0; }
@@ -340,7 +325,6 @@ const CanvasObjects = (() => {
   let selectedId = null;
   const typeSeq  = CONFIG.thumbLimits.map(() => 0);
 
-  // ── Z-order ────────────────────────────
   function compactZ() {
     [...objects].sort((a, b) => a.z - b.z).forEach((o, i) => { o.z = 10 + i; });
   }
@@ -351,10 +335,6 @@ const CanvasObjects = (() => {
     });
   }
 
-  // ── Interactivity ──────────────────────
-  // When nothing selected: ALL objects are tappable (natural top-wins hit-test).
-  // When something selected: only the selected object gets pointer events;
-  //   all others dim and become inert so controls always hit the right target.
   function updateInteractivity() {
     objects.forEach(o => {
       const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
@@ -367,7 +347,6 @@ const CanvasObjects = (() => {
     });
   }
 
-  // ── Floating panel (position:fixed, outside #canvas) ──
   let panel = null;
 
   function ensurePanel() {
@@ -383,7 +362,6 @@ const CanvasObjects = (() => {
       "box-shadow:0 4px 14px rgba(0,0,0,0.35)",
     ].join(";");
 
-    // Order: rotate | fwd | bck | del | done(last)
     [
       { id:"cp-fwd",    label:"↑", title:"Bring forward",  danger:false },
       { id:"cp-bck",    label:"↓", title:"Send backward",  danger:false },
@@ -412,10 +390,7 @@ const CanvasObjects = (() => {
     const o = objects.find(o => o.id === selectedId);
     if (!o) return;
 
-
     if (id === "cp-fwd" || id === "cp-bck") {
-      // z values are always kept compact (no gaps), so sort → swap → apply
-      // is always a single-step move with no normalisation pass eating the click.
       const sorted = [...objects].sort((a, b) => a.z - b.z);
       const i = sorted.findIndex(x => x.id === o.id);
       if (id === "cp-fwd" && i < sorted.length - 1) {
@@ -423,11 +398,11 @@ const CanvasObjects = (() => {
       } else if (id === "cp-bck" && i > 0) {
         const tmp = sorted[i].z; sorted[i].z = sorted[i-1].z; sorted[i-1].z = tmp;
       }
-         applyZ();
-  positionPanel();
-  Storage.save();
-  return;
-}
+      applyZ();
+      positionPanel();
+      Storage.save();
+      return;
+    }
 
     if (id === "cp-del") {
       Thumbs.release(o.itemIdx);
@@ -448,8 +423,8 @@ const CanvasObjects = (() => {
 
     const cr = DOM.canvas.getBoundingClientRect();
     const cx = cr.left + o.x + o.w / 2;
-    const topY    = cr.top + o.y;           // top edge of object
-    const bottomY = cr.top + o.y + o.h;     // bottom edge of object
+    const topY    = cr.top + o.y;
+    const bottomY = cr.top + o.y + o.h;
 
     panel.style.visibility = "hidden";
     panel.style.display    = "flex";
@@ -458,105 +433,100 @@ const CanvasObjects = (() => {
 
     panel.style.left = `${clamp(cx - pw / 2, 8, window.innerWidth - pw - 8)}px`;
 
-    const spaceAbove = topY - 8; // available room above object, minus small margin
+    const spaceAbove = topY - 8;
     if (spaceAbove >= ph + 40) {
-      // enough room above — place it there, with clearance from the rotate handle
       panel.style.top = `${topY - ph - 40}px`;
     } else {
-      // not enough room above — place below the object instead
       panel.style.top = `${Math.min(window.innerHeight - ph - 8, bottomY + 12)}px`;
     }
-}
+  }
 
   const hidePanel = () => { if (panel) panel.style.display = "none"; };
 
   let rotHandle = null;
 
-function ensureRotateHandle() {
-  if (rotHandle) return;
-  rotHandle = document.createElement("div");
-  rotHandle.className = "rotate-handle";
-  rotHandle.style.cssText = [
-    "position:fixed",
-    "width:24px", "height:24px",
-    "border-radius:50%",
-    "background:#378ADD",
-    "border:2px solid #fff",
-    "display:none",
-    "cursor:grab",
-    "touch-action:none",
-    "pointer-events:all",
-    "z-index:99999",
-    "align-items:center",
-    "justify-content:center",
-    "font-size:13px",
-    "color:#fff",
-  ].join(";");
-  rotHandle.textContent = "↻";
-  document.body.appendChild(rotHandle);
+  function ensureRotateHandle() {
+    if (rotHandle) return;
+    rotHandle = document.createElement("div");
+    rotHandle.className = "rotate-handle";
+    rotHandle.style.cssText = [
+      "position:fixed",
+      "width:24px", "height:24px",
+      "border-radius:50%",
+      "background:#378ADD",
+      "border:2px solid #fff",
+      "display:none",
+      "cursor:grab",
+      "touch-action:none",
+      "pointer-events:all",
+      "z-index:99999",
+      "align-items:center",
+      "justify-content:center",
+      "font-size:13px",
+      "color:#fff",
+    ].join(";");
+    rotHandle.textContent = "↻";
+    document.body.appendChild(rotHandle);
 
-  rotHandle.addEventListener("pointerdown", e => {
-    e.preventDefault();
-    e.stopPropagation();
-    const o = objects.find(o => o.id === selectedId);
-    if (!o) return;
-    rotHandle.setPointerCapture(e.pointerId);
-    startFreeRotateCaptured(o, rotHandle, e);
-  });
-}
-
-const hideRotateHandle = () => { if (rotHandle) rotHandle.style.display = "none"; };
-
-  function positionRotateHandle(o) {
-  ensureRotateHandle();
-  const cr = DOM.canvas.getBoundingClientRect();
-  const margin = 4;
-  const idealTop  = o.y + margin;
-  const idealLeft = o.x + o.w - 24 - margin;
-  const clampedTop  = clamp(idealTop, margin, cr.height - 24 - margin);
-  const clampedLeft = clamp(idealLeft, margin, cr.width  - 24 - margin);
-
-  rotHandle.style.left = `${cr.left + clampedLeft}px`;
-  rotHandle.style.top  = `${cr.top + clampedTop}px`;
-  rotHandle.style.display = "flex";
-}
-
-
-  function startFreeRotateCaptured(o, handleEl, triggerEvent) {
-  const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
-  if (!el) return;
-
-  const r  = el.getBoundingClientRect();
-  const cx = r.left + r.width  / 2;
-  const cy = r.top  + r.height / 2;
-  const a0 = Math.atan2(triggerEvent.clientY - cy, triggerEvent.clientX - cx);
-  const r0 = o.rotation;
-
-  document.body.style.cursor = "crosshair";
-
-  function onMove(ev) {
-  let d = Math.atan2(ev.clientY - cy, ev.clientX - cx) - a0;
-  if (d >  Math.PI) d -= 2 * Math.PI;
-  if (d < -Math.PI) d += 2 * Math.PI;
-  o.rotation = r0 + d;
-  el.style.transform = `rotate(${o.rotation}rad)`;
-  positionRotateHandle(o); // keep handle clamped during rotation too
-}
-  function onUp(ev) {
-    handleEl.releasePointerCapture(ev.pointerId);
-    handleEl.removeEventListener("pointermove", onMove);
-    handleEl.removeEventListener("pointerup", onUp);
-    document.body.style.cursor = "";
-    positionPanel();
-    Storage.save();
+    rotHandle.addEventListener("pointerdown", e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const o = objects.find(o => o.id === selectedId);
+      if (!o) return;
+      rotHandle.setPointerCapture(e.pointerId);
+      startFreeRotateCaptured(o, rotHandle, e);
+    });
   }
 
-  handleEl.addEventListener("pointermove", onMove);
-  handleEl.addEventListener("pointerup", onUp);
-}
+  const hideRotateHandle = () => { if (rotHandle) rotHandle.style.display = "none"; };
 
+  function positionRotateHandle(o) {
+    ensureRotateHandle();
+    const cr = DOM.canvas.getBoundingClientRect();
+    const margin = 4;
+    const idealTop  = o.y + margin;
+    const idealLeft = o.x + o.w - 24 - margin;
+    const clampedTop  = clamp(idealTop, margin, cr.height - 24 - margin);
+    const clampedLeft = clamp(idealLeft, margin, cr.width  - 24 - margin);
 
-  // ── Build DOM element for one object ───
+    rotHandle.style.left = `${cr.left + clampedLeft}px`;
+    rotHandle.style.top  = `${cr.top + clampedTop}px`;
+    rotHandle.style.display = "flex";
+  }
+
+  function startFreeRotateCaptured(o, handleEl, triggerEvent) {
+    const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
+    if (!el) return;
+
+    const r  = el.getBoundingClientRect();
+    const cx = r.left + r.width  / 2;
+    const cy = r.top  + r.height / 2;
+    const a0 = Math.atan2(triggerEvent.clientY - cy, triggerEvent.clientX - cx);
+    const r0 = o.rotation;
+
+    document.body.style.cursor = "crosshair";
+
+    function onMove(ev) {
+      let d = Math.atan2(ev.clientY - cy, ev.clientX - cx) - a0;
+      if (d >  Math.PI) d -= 2 * Math.PI;
+      if (d < -Math.PI) d += 2 * Math.PI;
+      o.rotation = r0 + d;
+      el.style.transform = `rotate(${o.rotation}rad)`;
+      positionRotateHandle(o);
+    }
+    function onUp(ev) {
+      handleEl.releasePointerCapture(ev.pointerId);
+      handleEl.removeEventListener("pointermove", onMove);
+      handleEl.removeEventListener("pointerup", onUp);
+      document.body.style.cursor = "";
+      positionPanel();
+      Storage.save();
+    }
+
+    handleEl.addEventListener("pointermove", onMove);
+    handleEl.addEventListener("pointerup", onUp);
+  }
+
   function buildEl(o) {
     const el = document.createElement("div");
     el.className  = "box";
@@ -571,14 +541,11 @@ const hideRotateHandle = () => { if (rotHandle) rotHandle.style.display = "none"
       "transition:opacity .15s ease",
     ].join(";");
 
-    // Image
     const img = document.createElement("img");
     img.src = CONFIG.thumbImages[o.itemIdx]; img.className = "svg-art"; img.draggable = false;
     img.style.cssText = "width:100%;height:100%;object-fit:contain;display:block;pointer-events:none;";
-    
     el.appendChild(img);
 
-    // Instance badge (multi-limit items only)
     if (CONFIG.thumbLimits[o.itemIdx] > 1) {
       const badge = document.createElement("div");
       badge.className = "instance-badge"; badge.textContent = o.seq;
@@ -586,15 +553,11 @@ const hideRotateHandle = () => { if (rotHandle) rotHandle.style.display = "none"
       el.appendChild(badge);
     }
 
-    // Selection outline
     const outline = document.createElement("div");
     outline.className = "sel-outline";
     outline.style.cssText = "position:absolute;inset:-3px;border:2px solid #378ADD;border-radius:3px;pointer-events:none;display:none;";
     el.appendChild(outline);
 
-
-
-    // ── Pointer handling ─────────────────
     let lpTimer = null, didMove = false;
 
     el.addEventListener("pointerdown", e => {
@@ -602,7 +565,6 @@ const hideRotateHandle = () => { if (rotHandle) rotHandle.style.display = "none"
       e.preventDefault(); e.stopPropagation();
       didMove = false;
 
-      // Long-press: show layer picker (only when there are overlaps)
       lpTimer = setTimeout(() => {
         if (didMove) return;
         const cr = DOM.canvas.getBoundingClientRect();
@@ -615,8 +577,6 @@ const hideRotateHandle = () => { if (rotHandle) rotHandle.style.display = "none"
       }, 500);
 
       if (o.id !== selectedId) {
-        // First press selects it, but doesn't stop here anymore — a single
-        // press-and-move should drag right away, not require a second tap.
         selectObj(o.id);
       }
 
@@ -630,36 +590,34 @@ const hideRotateHandle = () => { if (rotHandle) rotHandle.style.display = "none"
     return el;
   }
 
-  // ── Selection ───────────────────────────
   function selectObj(id) {
-  selectedId = id;
-  objects.forEach(o => {
-    const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
-    if (!el) return;
-    const isSel = o.id === id;
-    el.querySelector(".sel-outline").style.display = isSel ? "block" : "none";
-  });
-  const o = objects.find(o => o.id === id);
-  if (o) positionRotateHandle(o);
-  updateInteractivity();
-  positionPanel();
-  hidePicker();
-}
+    selectedId = id;
+    objects.forEach(o => {
+      const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
+      if (!el) return;
+      const isSel = o.id === id;
+      el.querySelector(".sel-outline").style.display = isSel ? "block" : "none";
+    });
+    const o = objects.find(o => o.id === id);
+    if (o) positionRotateHandle(o);
+    updateInteractivity();
+    positionPanel();
+    hidePicker();
+  }
 
-function deselect() {
-  selectedId = null;
-  objects.forEach(o => {
-    const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
-    if (!el) return;
-    el.querySelector(".sel-outline").style.display = "none";
-  });
-  hideRotateHandle();
-  hidePanel();
-  updateInteractivity();
-  hidePicker();
-}
+  function deselect() {
+    selectedId = null;
+    objects.forEach(o => {
+      const el = DOM.canvas.querySelector(`[data-id="${o.id}"]`);
+      if (!el) return;
+      el.querySelector(".sel-outline").style.display = "none";
+    });
+    hideRotateHandle();
+    hidePanel();
+    updateInteractivity();
+    hidePicker();
+  }
 
-  // ── Drag ────────────────────────────────
   function startDrag(objId, e, onFirstMove) {
     const o  = objects.find(o => o.id === objId); if (!o) return;
     const el = DOM.canvas.querySelector(`[data-id="${objId}"]`);
@@ -667,13 +625,12 @@ function deselect() {
     const ox = e.clientX - cr.left - o.x;
     const oy = e.clientY - cr.top  - o.y;
     let moved = false;
-    const VISIBLE = 50;
 
     function onMove(ev) {
       if (blockedByTouchLock()) return;
       if (!moved) { moved = true; if (onFirstMove) onFirstMove(); }
       const r = DOM.canvas.getBoundingClientRect();
-      const visibleX = Math.min(80, o.w * 0.3); // at least 30% of width or 80px, whichever is smaller
+      const visibleX = Math.min(80, o.w * 0.3);
       const visibleY = Math.min(80, o.h * 0.3);
 
       o.x = clamp(ev.clientX - r.left - ox, -(o.w - visibleX), r.width  - visibleX);
@@ -688,23 +645,18 @@ function deselect() {
     }
     document.addEventListener("pointermove", onMove);
     document.addEventListener("pointerup", onUp);
-}
+  }
 
-  // ── Layer picker ────────────────────────
   let picker = null;
 
-let pickerRotation = 0;
-pickerRotation =
-  parseInt(localStorage.getItem("pickerRotation"), 10) || 0;
+  let pickerRotation = 0;
+  pickerRotation = parseInt(localStorage.getItem("pickerRotation"), 10) || 0;
 
   function applyPickerRotation() {
-  if (!picker) return;
-
-  picker.style.transform =
-    `rotate(${pickerRotation}deg)`;
-
-  picker.style.transformOrigin = "center center";
-}
+    if (!picker) return;
+    picker.style.transform = `rotate(${pickerRotation}deg)`;
+    picker.style.transformOrigin = "center center";
+  }
 
   function ensurePicker() {
     if (picker) return;
@@ -716,10 +668,9 @@ pickerRotation =
       "background:#2f3542", "color:#fff", "border:1px solid #555",
       "border-radius:8px", "z-index:99998", "min-width:150px",
       "box-shadow:0 4px 14px rgba(0,0,0,0.55)",
-      "transition:transform 0.25s ease", 
+      "transition:transform 0.25s ease",
     ].join(";");
     document.body.appendChild(picker);
-    // Dismiss on outside tap
     document.addEventListener("pointerdown", ev => {
       if (!ev.target.closest("#layer-picker")) hidePicker();
     }, true);
@@ -738,54 +689,47 @@ pickerRotation =
     picker.innerHTML = "";
 
     const header = document.createElement("div");
-header.style.cssText = `
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  padding:2px 6px 5px;
-`;
+    header.style.cssText = `
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      padding:2px 6px 5px;
+    `;
 
-const lbl = document.createElement("div");
-lbl.textContent = "Select layer";
-lbl.style.cssText =
-  "font-size:11px;color:#aaa;letter-spacing:.04em;text-transform:uppercase;";
+    const lbl = document.createElement("div");
+    lbl.textContent = "Select layer";
+    lbl.style.cssText = "font-size:11px;color:#aaa;letter-spacing:.04em;text-transform:uppercase;";
 
-const rotBtn = document.createElement("button");
-rotBtn.textContent = "↻";
-rotBtn.title = "Rotate picker";
-rotBtn.style.cssText = `
-  width:36px;
-  height:36px;
-  border:none;
-  border-radius:6px;
-  background:#4a5568;
-  color:#fff;
-  cursor:pointer;
-  font-size:20px;
-  font-weight:bold;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-shrink:0;
-`;
+    const rotBtn = document.createElement("button");
+    rotBtn.textContent = "↻";
+    rotBtn.title = "Rotate picker";
+    rotBtn.style.cssText = `
+      width:36px;
+      height:36px;
+      border:none;
+      border-radius:6px;
+      background:#4a5568;
+      color:#fff;
+      cursor:pointer;
+      font-size:20px;
+      font-weight:bold;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-shrink:0;
+    `;
 
-rotBtn.addEventListener("pointerdown", ev => {
-  ev.preventDefault();
-  ev.stopPropagation();
+    rotBtn.addEventListener("pointerdown", ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      pickerRotation = (pickerRotation + 90) % 360;
+      localStorage.setItem("pickerRotation", String(pickerRotation));
+      applyPickerRotation();
+    });
 
-   pickerRotation = (pickerRotation + 90) % 360;
-
-  localStorage.setItem(
-    "pickerRotation",
-    String(pickerRotation)
-  );
-
-  applyPickerRotation();
-});
-
-header.append(lbl, rotBtn);
-picker.appendChild(header);
+    header.append(lbl, rotBtn);
+    picker.appendChild(header);
 
     hits.forEach((o, i) => {
       const name = CONFIG.thumbLimits[o.itemIdx] > 1
@@ -822,84 +766,76 @@ picker.appendChild(header);
 
   const hidePicker = () => { if (picker) picker.style.display = "none"; };
 
-  // Canvas background tap → deselect
   DOM.canvas.addEventListener("pointerdown", e => {
     if (e.target === DOM.canvas) deselect();
   });
   DOM.canvas.addEventListener("contextmenu", e => e.preventDefault());
 
-  // ── Public API ──────────────────────────
   return {
     hasBoxes()  { return objects.length > 0; },
     getAll()    { return [...objects]; },
     getSelectedIndex() { return objects.findIndex(o => o.id === selectedId); },
     getLayout() {
-  const cr = DOM.canvas.getBoundingClientRect();
-  return objects.map(o => ({
-    left: o.x / cr.width,
-    top: o.y / cr.height,
-    // Stored as fractions of canvas size, same as left/top — this way an
-    // object's proportions stay correct no matter what device's canvas
-    // width was used to design it (the canvas is responsive, so absolute
-    // pixel sizes alone don't reproduce consistently elsewhere).
-    width: o.w / cr.width,
-    height: o.h / cr.height,
-    origin: o.itemIdx,
-    rotation: o.rotation,
-    z: o.z,
-  }));
-},
+      const cr = DOM.canvas.getBoundingClientRect();
+      return objects.map(o => ({
+        left: o.x / cr.width,
+        top: o.y / cr.height,
+        width: o.w / cr.width,
+        height: o.h / cr.height,
+        origin: o.itemIdx,
+        rotation: o.rotation,
+        z: o.z,
+      }));
+    },
 
     place(itemIdx) {
-  const size = CONFIG.thumbSizes[itemIdx];
-  const sc   = CONFIG.thumbScale[itemIdx] ?? 1;
-  const w    = Math.round(size.w * sc);
-  const h    = Math.round(size.h * sc);
+      const size = CONFIG.thumbSizes[itemIdx];
+      const sc   = CONFIG.thumbScale[itemIdx] ?? 1;
+      const w    = Math.round(size.w * sc);
+      const h    = Math.round(size.h * sc);
 
-  const cr   = DOM.canvas.getBoundingClientRect();
-  const off  = (objects.length % 6) * 16;
+      const cr   = DOM.canvas.getBoundingClientRect();
+      const off  = (objects.length % 6) * 16;
 
-  typeSeq[itemIdx]++;
+      typeSeq[itemIdx]++;
 
-  const o = {
-    id: nextId++,
-    itemIdx,
-    seq: typeSeq[itemIdx],
+      const o = {
+        id: nextId++,
+        itemIdx,
+        seq: typeSeq[itemIdx],
+        x: (cr.width  - w) / 2 + off,
+        y: (cr.height - h) / 2 + off,
+        w,
+        h,
+        rotation: 0,
+        z: objects.length + 10,
+      };
 
-    x: (cr.width  - w) / 2 + off,
-    y: (cr.height - h) / 2 + off,
-
-    w,
-    h,
-    rotation: 0,
-    z: objects.length + 10,
-  };
-
-  objects.push(o);
-  DOM.canvas.appendChild(buildEl(o));
-  selectObj(o.id);
-  Storage.save();
-},
+      objects.push(o);
+      DOM.canvas.appendChild(buildEl(o));
+      selectObj(o.id);
+      Storage.save();
+    },
 
     clear() {
-  objects = [];
-  nextId = 0;
-  selectedId = null;
-  DOM.canvas.innerHTML = "";
+      objects = [];
+      nextId = 0;
+      selectedId = null;
+      DOM.canvas.innerHTML = "";
 
-  hidePanel();
-  hidePicker();
-  hideRotateHandle();
+      hidePanel();
+      hidePicker();
+      hideRotateHandle();
 
-  typeSeq.fill(0);
-},
+      typeSeq.fill(0);
+    },
 
     restore(preserveIndex = null) {
       const data = Storage.load(); if (!data) return;
       const cr = DOM.canvas.getBoundingClientRect();
       DOM.canvas.innerHTML = ""; objects = [];
       selectedId = null;
-      typeSeq.fill(0); // ← add this, resets sequence counters before rebuilding
+      typeSeq.fill(0);
 
       hidePanel();
       hidePicker();
@@ -929,14 +865,11 @@ picker.appendChild(header);
       if (preserveIndex !== null && preserveIndex >= 0 && objects[preserveIndex]) {
         selectObj(objects[preserveIndex].id);
       }
-},
-      deselect, hidePanel,
+    },
+    deselect, hidePanel,
   };
 })();
 
-// ─────────────────────────────────────────
-//  UI
-// ─────────────────────────────────────────
 // ─────────────────────────────────────────
 //  FORMAT PICKER
 // ─────────────────────────────────────────
@@ -965,13 +898,15 @@ const FormatPicker = (() => {
   btnPortrait?.addEventListener("click", () => choose("portrait"));
   btnLandscape?.addEventListener("click", () => choose("landscape"));
 
-  // Default to portrait unless a previous choice exists in this session
   const saved = localStorage.getItem("canvasFormat");
   choose(saved || "portrait");
 
   return { choose };
 })();
 
+// ─────────────────────────────────────────
+//  UI
+// ─────────────────────────────────────────
 const UI = (() => {
   function setBtn(el, disabled, text) {
     if (!el) return;
@@ -1016,13 +951,6 @@ const UI = (() => {
     const scale = pr.width / cr.width;
     const all   = CanvasObjects.getAll();
 
-    // Each piece of paper has its own inherent translucency (see
-    // CONFIG.thumbOpacity) — normal alpha blending compounds it naturally
-    // where sheets overlap, no per-layer math needed. Fully opaque
-    // materials (opacity 1) correctly block what's underneath, same as
-    // they would in the physical print.
-
-    // Draw bottom → top so stacking matches canvas
     [...all].sort((a, b) => a.z - b.z).forEach(o => {
       const wrap = document.createElement("div");
       const sheetOpacity = CONFIG.thumbOpacity[o.itemIdx] ?? 0.6;
@@ -1045,7 +973,6 @@ const UI = (() => {
       DOM.previewCanvas.appendChild(wrap);
     });
 
-    // Stack-order legend (top → bottom, human-readable)
     if (all.length > 1) {
       const legend = document.createElement("div");
       legend.style.cssText = [
@@ -1061,7 +988,6 @@ const UI = (() => {
       title.style.cssText = "font-weight:700;margin-bottom:4px;font-size:11px;letter-spacing:.04em;text-transform:uppercase;opacity:.5;";
       legend.appendChild(title);
 
-      // Sort top → bottom for display
       [...all].sort((a, b) => b.z - a.z).forEach((o, i) => {
         const name = CONFIG.thumbLimits[o.itemIdx] > 1
           ? `${THUMB_NAMES[o.itemIdx]} #${o.seq}`
@@ -1096,17 +1022,14 @@ const UI = (() => {
         const timeStr = m > 0 ? `${m}:${String(s).padStart(2,"0")}` : `${d}s`;
         btn.textContent = `Printing — ${timeStr}`;
         btn.classList.remove("pulse");
-        if (DOM.slotCaptionText) DOM.slotCaptionText.textContent = `Next slot available in ${timeStr}`;
       } else {
         btn.textContent = "Almost done…"; btn.classList.add("pulse");
-        if (DOM.slotCaptionText) DOM.slotCaptionText.textContent = "Next slot available any moment now";
       }
       return;
     }
     if (resEnd && now < resEnd) {
       btn.textContent = `Checkout in progress — ${Math.ceil((resEnd - now) / 1000)}s`;
       btn.classList.remove("pulse");
-      if (DOM.slotCaptionText) DOM.slotCaptionText.textContent = "Checkout in progress — stick around in case of cancellation";
       return;
     }
     btn.classList.remove("pulse");
@@ -1135,8 +1058,7 @@ const HelpPopup = (() => {
     let top  = ar.bottom + 10;
 
     left = clamp(left, 8, window.innerWidth - pw - 8);
-    if (top + ph > window.innerHeight - 8) {top = ar.top - ph - 10;
-    }
+    if (top + ph > window.innerHeight - 8) { top = ar.top - ph - 10; }
 
     top = clamp(top, 8, window.innerHeight - ph - 8);
 
@@ -1145,7 +1067,6 @@ const HelpPopup = (() => {
   }
 
   function show(anchor) {
-    console.log("anchor rect:", anchor.getBoundingClientRect());
     position(anchor);
     visible = true;
     CanvasObjects.hidePanel();
@@ -1161,13 +1082,13 @@ const HelpPopup = (() => {
 })();
 
 // ─────────────────────────────────────────
-//  STATUS BAR  (single source of truth: edit page banner + preview caption)
+//  STATUS BAR
 // ─────────────────────────────────────────
 const StatusBar = (() => {
   const bar        = document.getElementById("statusBar");
-  const text        = document.getElementById("statusBarText");
-  const dismissBtn  = document.getElementById("statusBarDismissBtn");
-  if (!bar) return { update(){}, };
+  const text       = document.getElementById("statusBarText");
+  const dismissBtn = document.getElementById("statusBarDismissBtn");
+  if (!bar) return { update(){}, resetDismissal(){} };
 
   let dismissed = false;
   let audioCtx  = null;
@@ -1190,7 +1111,7 @@ const StatusBar = (() => {
   }
 
   function computeText() {
-    const status = State.get("statusForMe"); // "production" | "done" | null
+    const status = State.get("statusForMe");
     const end    = State.get("productionEndsAt");
 
     if (status === "done") return { msg: "Your design is ready — come pick it up!", color: "#00c853", textColor: "#000", showDismiss: true };
@@ -1209,7 +1130,6 @@ const StatusBar = (() => {
   function update() {
     const info = computeText();
 
-    // Ding once, the moment status flips to "done"
     const status = State.get("statusForMe");
     if (status === "done" && lastStatus !== "done") playDing();
     lastStatus = status;
@@ -1226,13 +1146,11 @@ const StatusBar = (() => {
     text.textContent           = info.msg;
     dismissBtn.style.display   = info.showDismiss ? "inline-block" : "none";
 
-    // Mirror into the preview modal's caption so they always agree
     if (DOM.slotCaptionText) DOM.slotCaptionText.textContent = info.msg;
   }
 
   dismissBtn?.addEventListener("click", () => { dismissed = true; update(); });
 
-  // Reset dismissal whenever a NEW production run starts for this user
   function resetDismissal() { dismissed = false; }
 
   return { update, resetDismissal };
@@ -1255,7 +1173,7 @@ const Sync = (() => {
       fails = 0;
       const d = await res.json();
 
-            if (d.status === "done") {
+      if (d.status === "done") {
         const { id: myReservationId } = Storage.loadReservation();
         const isMine = myReservationId && d.reservationId === myReservationId;
         if (isMine) {
@@ -1379,7 +1297,7 @@ const Checkout = (() => {
 const Actions = {
   reset() {
     CanvasObjects.clear(); Thumbs.reset();
-    Storage.clearAll();       // wipes design + reservation
+    Storage.clearAll();
     if (State.productionActive) {
       Storage.saveReservation(State.get("reservationId"), State.get("productionEndsAt"));
     }
@@ -1472,12 +1390,12 @@ function attachListeners() {
   document.getElementById("closeHelpBtn")?.addEventListener("click", () => HelpPopup.hide());
 
   if (DOM.infoBtn) {
-  DOM.infoBtn.addEventListener("pointerdown", e => {
-    e.preventDefault();
-    e.stopPropagation();
-    HelpPopup.toggle(DOM.infoBtn);
-  });
-}
+    DOM.infoBtn.addEventListener("pointerdown", e => {
+      e.preventDefault();
+      e.stopPropagation();
+      HelpPopup.toggle(DOM.infoBtn);
+    });
+  }
 }
 
 // ─────────────────────────────────────────
@@ -1491,30 +1409,31 @@ document.addEventListener("DOMContentLoaded", () => {
     CanvasObjects.restore();
 
     const url = new URL(window.location.href);
-if (!url.searchParams.has("session_id")) {
-  const { id } = Storage.loadReservation();
-  if (id) {
-    try {
-      const statusRes = await fetch(`${CONFIG.api}/reservation-status`);
-      const statusData = await statusRes.json();
-      // Only release/clear if it's still just a pending reservation —
-      // never touch it if the order has moved to production or done.
-      if (!statusData.valid || (statusData.reservationId === id && statusData.status === "reserved")) {
-        await post("/release-reservation", { reservationId: id }).catch(() => {});
-        Storage.clearReservation();
+    if (!url.searchParams.has("session_id")) {
+      const { id } = Storage.loadReservation();
+      if (id) {
+        try {
+          const statusRes = await fetch(`${CONFIG.api}/reservation-status`);
+          const statusData = await statusRes.json();
+          // Only release/clear a reservation that is still just pending
+          // checkout — never touch it once it's in production or done,
+          // otherwise a refresh would wipe proof of a paid order.
+          if (!statusData.valid || (statusData.reservationId === id && statusData.status === "reserved")) {
+            await post("/release-reservation", { reservationId: id }).catch(() => {});
+            Storage.clearReservation();
+          }
+        } catch {
+          // network hiccup — don't destroy the reservation just because this check failed
+        }
       }
-    } catch {
-      // network hiccup — don't destroy the reservation just because this check failed
     }
-  }
-}
 
     await Sync.poll();
     Checkout.handleStripeReturn();
 
     if (State.get("statusForMe") === "production" && !DOM.successModal?.classList.contains("active")) {
-  UI.openSuccess();
-}
+      UI.openSuccess();
+    }
 
     State.set({ bootComplete: true });
     Sync.start();
@@ -1534,9 +1453,6 @@ window.addEventListener("pageshow", e => {
   if (id) Checkout.releaseOnAbandon();
 });
 
-// Warn before leaving the tab while a reservation is active or an order
-// is in production — browsers show their own generic message, but this
-// at least stops accidental closes/navigations.
 window.addEventListener("beforeunload", (e) => {
   if (State.checkoutBlocked) {
     e.preventDefault();
