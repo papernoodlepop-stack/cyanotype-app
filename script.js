@@ -1491,10 +1491,23 @@ document.addEventListener("DOMContentLoaded", () => {
     CanvasObjects.restore();
 
     const url = new URL(window.location.href);
-    if (!url.searchParams.has("session_id")) {
-      const { id } = Storage.loadReservation();
-      if (id) { await post("/release-reservation", { reservationId: id }).catch(() => {}); Storage.clearReservation(); }
+if (!url.searchParams.has("session_id")) {
+  const { id } = Storage.loadReservation();
+  if (id) {
+    try {
+      const statusRes = await fetch(`${CONFIG.api}/reservation-status`);
+      const statusData = await statusRes.json();
+      // Only release/clear if it's still just a pending reservation —
+      // never touch it if the order has moved to production or done.
+      if (!statusData.valid || (statusData.reservationId === id && statusData.status === "reserved")) {
+        await post("/release-reservation", { reservationId: id }).catch(() => {});
+        Storage.clearReservation();
+      }
+    } catch {
+      // network hiccup — don't destroy the reservation just because this check failed
     }
+  }
+}
 
     await Sync.poll();
     Checkout.handleStripeReturn();
